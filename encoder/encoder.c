@@ -16,7 +16,7 @@ volatile float actual_speed_r;
 void get_speed_and_distance(int encoder, uint32_t pulse_count)
 {
     // Calculate motor speed in cm/s
-    double distance_per_hole = 1.005;
+    double distance_per_hole = 0.36;
     double distance = distance_per_hole * pulse_count;
     double speed = distance / 0.075;
     
@@ -58,7 +58,7 @@ uint32_t get_grids_moved(bool reset)
     //printf("PREDISTANCE TRAVELLED: %.2lf\n", moved_distance);
     uint32_t grids_moved = moved_distance / 14;
 
-    printf("DISTANCE TRAVELLED: %.2lf\n", moved_distance);
+    //printf("DISTANCE TRAVELLED: %.2lf\n", moved_distance);
 
     if (reset)
     {
@@ -69,27 +69,22 @@ uint32_t get_grids_moved(bool reset)
     return grids_moved;
 }
 
-// Function to count each encoder's pulse
-void encoder_pulse(uint gpio, uint32_t events)
-{
-    if (gpio == L_ENCODER_OUT)
-    {
+void encoder_pulse(uint gpio, uint32_t events) {
+    if (gpio == L_ENCODER_OUT) {
         pulse_count_l++;
-    }
-    else if (gpio == R_ENCODER_OUT)
-    {
+        //printf("Left encoder pulse detected. Pulse count L: %d\n", pulse_count_l);
+    } else if (gpio == R_ENCODER_OUT) {
         pulse_count_r++;
+        //printf("Right encoder pulse detected. Pulse count R: %d\n", pulse_count_r);
     }
 
     oscillation++;
 }
 
-
-
 // Function to interrupt every second
 bool encoder_callback()
 {
-    printf("PULSE COUNT L: %d\n", pulse_count_l);
+    //printf("PULSE COUNT L: %d\n", pulse_count_l);
     // Call get_speed_and_distance function every second
     get_speed_and_distance(0, pulse_count_l);
     get_speed_and_distance(1, pulse_count_r);
@@ -101,7 +96,7 @@ bool encoder_callback()
     if (moved_distance >= TARGET_DISTANCE_CM || (uint32_t)(moved_distance / 14.0) >= target_grid_number) {
         complete_movement = true;
         stop_motor();
-        printf("Target distance of %.2lf cm or %d grids reached. Stopping motor.\n", TARGET_DISTANCE_CM, target_grid_number);
+        //printf("Target distance of %.2lf cm or %d grids reached. Stopping motor.\n", TARGET_DISTANCE_CM, target_grid_number);
     }
 
     return true;

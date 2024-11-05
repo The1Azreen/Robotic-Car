@@ -25,8 +25,9 @@ float prev_error_r = 0.0;
 
 float setpoint_speed = 15.0;
 
-volatile float pwm_l = 1900;
-volatile float pwm_r = 1900;
+volatile float pwm_l = 2800;
+volatile float pwm_r = 3150;
+
 
 // Function to initialize pins for motors
 void init_motor_setup()
@@ -155,52 +156,37 @@ void stop_motor()
 
 // Function to turn
 // 0 - left, 1 - right
-void turn_motor(int direction)
-{
-    // pwm_set_chan_level(pwm_gpio_to_slice_num(L_MOTOR_ENA), pwm_gpio_to_channel(L_MOTOR_ENA), pwm);
-    // pwm_set_chan_level(pwm_gpio_to_slice_num(R_MOTOR_ENB), pwm_gpio_to_channel(R_MOTOR_ENB), pwm);
-    //printf("Turning motor\n");
-    oscillation = 0;
+void turn_motor(int direction, float pwm_l, float pwm_r, int delay_ms) {
+    // Set PWM values for turning
+    uint slice_left = pwm_gpio_to_slice_num(L_MOTOR_ENA);
+    uint slice_right = pwm_gpio_to_slice_num(R_MOTOR_ENB);
 
-    int target_notch_count = 190 * ENCODER_NOTCH / 360;
-    move_motor(3125, 3125);
+    pwm_set_chan_level(slice_left, pwm_gpio_to_channel(L_MOTOR_ENA), pwm_l);
+    pwm_set_chan_level(slice_right, pwm_gpio_to_channel(R_MOTOR_ENB), pwm_r);
 
-    // Motor to turn left
-    if (direction == 0)
-    {
-        //printf("Turning left\n");
-        // Reverse left wheel, forward right wheel
-        gpio_put(L_MOTOR_IN1, 1);
+    // Set motor direction for turning
+    if (direction == 0) { // Left turn
+        gpio_put(L_MOTOR_IN1, 1);  // Left motor backward
         gpio_put(L_MOTOR_IN2, 0);
-        gpio_put(R_MOTOR_IN3, 0);
+        gpio_put(R_MOTOR_IN3, 0);  // Right motor forward
         gpio_put(R_MOTOR_IN4, 1);
-
-        // Enable the enable pins
-        gpio_put(L_MOTOR_ENA, 1);
-        gpio_put(R_MOTOR_ENB, 1);
-    }
-    // Motor to turn right
-    else
-    {
-        //printf("Turning right\n");
-        // Reverse right wheel, forward left wheel
-        gpio_put(L_MOTOR_IN1, 0);
+    } else { // Right turn
+        gpio_put(L_MOTOR_IN1, 0);  // Left motor forward
         gpio_put(L_MOTOR_IN2, 1);
-        gpio_put(R_MOTOR_IN3, 1);
+        gpio_put(R_MOTOR_IN3, 1);  // Right motor backward
         gpio_put(R_MOTOR_IN4, 0);
-
-        // Enable the enable pins
-        gpio_put(L_MOTOR_ENA, 1);
-        gpio_put(R_MOTOR_ENB, 1);
     }
 
-    while (oscillation < target_notch_count)
-    {
-        // wait
-    }
+    // Enable motors
+    gpio_put(L_MOTOR_ENA, 1);
+    gpio_put(R_MOTOR_ENB, 1);
 
+    // Hard-coded delay for the turn (adjust based on testing)
+    sleep_ms(delay_ms);
+
+    // Stop motors after delay
     stop_motor();
-    sleep_ms(50);
+    printf("Turn complete with delay: %d ms\n", delay_ms);
 }
 
 // Function to move forward for a set number of grids

@@ -8,7 +8,6 @@
 #include "ultrasonic.h"
 
 #define BUTTON_PIN 21      // GPIO pin connected to the button
-
 typedef enum {
     IDLE = 0,
     Ultrasonic10cm,
@@ -62,7 +61,7 @@ int main()
     }
 }
 
-void change_state(){
+void change_state() {
     printf("Current state: %d\n", current_state);
     switch (current_state)
     {   
@@ -76,7 +75,7 @@ void change_state(){
         {
             double distance = ultrasonic_get_distance(ultrasonic_state);
             printf("Distance: %.2lf cm\n", distance);
-            if (distance > 10.0)
+            if (distance > 12.0)
             {
                 move_motor(pwm_l, pwm_r); // Move forward
             }
@@ -99,7 +98,7 @@ void change_state(){
         {
             printf("Traveling Mode\n");
             move_forward_cm(90.0); // Move forward 90 cm
-            // current_state = Ultrasonic10cm;
+            current_state = IDLE;
             break;
         }
         default:
@@ -107,15 +106,19 @@ void change_state(){
     }
 }
 
-// Initialize interrupt for encoder and ultrasonic sensor
-void init_interrupt(){
-    gpio_set_irq_enabled_with_callback(L_ENCODER_OUT, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &ihandler);
-    gpio_set_irq_enabled_with_callback(R_ENCODER_OUT, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &ihandler);
+void init_interrupt() {
+    // Configure single-edge triggering for encoder pins (e.g., rising edge only)
+    gpio_set_irq_enabled_with_callback(L_ENCODER_OUT, GPIO_IRQ_EDGE_RISE, true, &ihandler);
+    gpio_set_irq_enabled_with_callback(R_ENCODER_OUT, GPIO_IRQ_EDGE_RISE, true, &ihandler);
+    
+    // Set up interrupt for ultrasonic sensor (both edges are okay for this one)
     gpio_set_irq_enabled_with_callback(ECHO_PIN, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &ihandler);
+
+    // Set up button interrupt on falling edge
     gpio_set_irq_enabled_with_callback(BUTTON_PIN, GPIO_IRQ_EDGE_FALL, true, &ihandler);
 }
 
-void ihandler(uint gpio, uint32_t events){
+void ihandler(uint gpio, uint32_t events) {
     if (gpio == BUTTON_PIN)
     {
         if (current_state == IDLE)
@@ -126,52 +129,54 @@ void ihandler(uint gpio, uint32_t events){
             current_state = Travel90cm;
     }
     // Encoder interrupt handler
-    if (gpio == L_ENCODER_OUT || gpio == R_ENCODER_OUT){
+    if (gpio == L_ENCODER_OUT || gpio == R_ENCODER_OUT) {
         encoder_pulse(gpio, events);
     }
     // Ultrasonic sensor interrupt handler
-    else if (gpio == ECHO_PIN){
+    else if (gpio == ECHO_PIN) {
         echo_pulse_handler(gpio, events);
     }
 }
 
-// Function to turn right 90 degrees
-void turn_right_90()
-{
+void turn_right_90() {
+    // Example PWM values for turning
+    pwm_l = 3125;  // Left motor power for right turn
+    pwm_r = 2500;  // Right motor power for right turn
 
-    // Set PWM for turning
-    pwm_l = 3125;
-    pwm_r = 3125;
-    turn_motor(1);
+    int delay_ms = 400; // Adjust based on testing for a 90-degree turn
 
-    // Wait for turn to complete (adjust delay as needed)
-    sleep_ms(500);
-
-    stop_motor();
+    // Call turn_motor with direction 1 (right turn), PWM values, and delay
+    turn_motor(1, pwm_l, pwm_r, delay_ms);
 }
 
 // Function to move forward a specific distance in cm
-void move_forward_cm(float distance)
-{
-    int target_grid_number =  distance / 14;
-    start_tracking(target_grid_number);
-    move_grids(target_grid_number); // Convert distance to number of grids
-    while (1) {
-        // Get the number of grids moved
-        uint32_t grids_moved = get_grids_moved(false);
-        printf("Grids moved: %d\n", grids_moved);
+void move_forward_cm(float distance) {
+    // Set PWM values for forward movement
+    pwm_l = 2800;  // Adjusted left motor speed
+    pwm_r = 3150;  // Adjusted right motor speed
 
-        // Check if movement is complete
-        if (complete_movement) {
-            printf("Target distance reached. Stopping motor.\n");
-            stop_motor();
-            break;
+    // Set the motors to move forward
+    uint slice_left = pwm_gpio_to_slice_num(L_MOTOR_ENA);
+    uint slice_right = pwm_gpio_to_slice_num(R_MOTOR_ENB);
 
-            // Optionally, reset tracking for next operation
-            start_tracking(target_grid_number);
-        }
+    pwm_set_chan_level(slice_left, pwm_gpio_to_channel(L_MOTOR_ENA), pwm_l);
+    pwm_set_chan_level(slice_right, pwm_gpio_to_channel(R_MOTOR_ENB), pwm_r);
 
-        vTaskDelay(pdMS_TO_TICKS(500)); // Check every 500 ms
-    }
+    gpio_put(L_MOTOR_IN1, 0);  // Left motor forward
+    gpio_put(L_MOTOR_IN2, 1);
+    gpio_put(R_MOTOR_IN3, 0);  // Right motor forward
+    gpio_put(R_MOTOR_IN4, 1);
 
+    gpio_put(L_MOTOR_ENA, 1);  // Enable left motor
+    gpio_put(R_MOTOR_ENB, 1);  // Enable right motor
+
+    // Hardcoded delay to approximate distance
+    int delay_ms = distance * 27;  // Adjust multiplier based on testing
+    printf("Moving forward for %d ms to cover approximately %.2f cm.\n", delay_ms, distance);
+
+    sleep_ms(delay_ms);  // Wait for the calculated delay
+
+    // Stop the motors after the delay
+    stop_motor();
+    printf("Hard-coded distance reached. Stopping motor.\n");
 }

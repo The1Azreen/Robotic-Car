@@ -26,7 +26,7 @@ void init_motor_pwm();
 void move_motor(float pwm_l, float pwm_r);
 void reverse_motor(float pwm_l, float pwm_r);
 void stop_motor();
-void turn_motor(int direction);
+void turn_motor(int direction, float pwm_l, float pwm_r, int delay_ms);
 void update_motor_speed();
 void move_grids(int number_of_grids);
 float calculate_control_signal(float *integral, float *prev_error, float error);
