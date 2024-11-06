@@ -1,7 +1,8 @@
 # Add your source files here
 add_executable(${PROJECT_NAME}
-    main.c
-    blink.c
+    #main.c
+    #blink.c
+    station2.c
 )
 
 # Include directories

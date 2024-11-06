@@ -143,7 +143,7 @@ void turn_right_90() {
     pwm_l = 3125;  // Left motor power for right turn
     pwm_r = 2500;  // Right motor power for right turn
 
-    int delay_ms* = 435; // Adjust based on testing for a 90-degree turn
+    int delay_ms = 435; // Adjust based on testing for a 90-degree turn
 
     // Call turn_motor with direction 1 (right turn), PWM values, and delay
     turn_motor(1, pwm_l, pwm_r, delay_ms);
