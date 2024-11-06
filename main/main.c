@@ -75,7 +75,7 @@ void change_state() {
         {
             double distance = ultrasonic_get_distance(ultrasonic_state);
             printf("Distance: %.2lf cm\n", distance);
-            if (distance > 12.0)
+            if (distance > 15.0)
             {
                 move_motor(pwm_l, pwm_r); // Move forward
             }
@@ -143,7 +143,7 @@ void turn_right_90() {
     pwm_l = 3125;  // Left motor power for right turn
     pwm_r = 2500;  // Right motor power for right turn
 
-    int delay_ms = 400; // Adjust based on testing for a 90-degree turn
+    int delay_ms* = 435; // Adjust based on testing for a 90-degree turn
 
     // Call turn_motor with direction 1 (right turn), PWM values, and delay
     turn_motor(1, pwm_l, pwm_r, delay_ms);
@@ -152,8 +152,8 @@ void turn_right_90() {
 // Function to move forward a specific distance in cm
 void move_forward_cm(float distance) {
     // Set PWM values for forward movement
-    pwm_l = 2800;  // Adjusted left motor speed
-    pwm_r = 3150;  // Adjusted right motor speed
+    pwm_l = 2642;  // Adjusted left motor speed
+    pwm_r = 3045;  // Adjusted right motor speed
 
     // Set the motors to move forward
     uint slice_left = pwm_gpio_to_slice_num(L_MOTOR_ENA);
@@ -171,7 +171,7 @@ void move_forward_cm(float distance) {
     gpio_put(R_MOTOR_ENB, 1);  // Enable right motor
 
     // Hardcoded delay to approximate distance
-    int delay_ms = distance * 27;  // Adjust multiplier based on testing
+    int delay_ms = distance * 30;  // Adjust multiplier based on testing
     printf("Moving forward for %d ms to cover approximately %.2f cm.\n", delay_ms, distance);
 
     sleep_ms(delay_ms);  // Wait for the calculated delay
