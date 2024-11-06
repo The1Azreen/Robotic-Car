@@ -8,9 +8,11 @@ add_executable(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_CURRENT_LIST_DIR}
+    
     motor  # Include the motor directory
     encoder  # Include the encoder directory
     ultrasonic
+    barcode
 )
 
 # Add required libraries
@@ -21,6 +23,7 @@ target_link_libraries(${PROJECT_NAME}
     motor_lib  # Link the motor library
     encoder_lib  # Link the encoder library
     ultrasonic_lib
+    barcode_lib
 )
 
 # Enable output over UART/USB

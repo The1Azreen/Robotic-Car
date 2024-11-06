@@ -5,7 +5,7 @@
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "hardware/pwm.h"
-
+#include "FreeRTOS.h"
 // Define motor pins
 #define L_MOTOR_IN1 3  // GPIO pin for L motor input 1
 #define L_MOTOR_IN2 2  // GPIO pin for L motor input 2

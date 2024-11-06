@@ -6,7 +6,7 @@
 #include "motor.h"
 #include "encoder.h"
 #include "ultrasonic.h"
-
+#include "barcode_scanner.h"
 #define BUTTON_PIN 21      // GPIO pin connected to the button
 typedef enum {
     IDLE = 0,
