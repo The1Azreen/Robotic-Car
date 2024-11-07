@@ -129,7 +129,7 @@ void ihandler(uint gpio, uint32_t events) {
             current_state = Travel90cm;
     }
     // Encoder interrupt handler
-    if (gpio == L_ENCODER_OUT || gpio == R_ENCODER_OUT) {
+    else if (gpio == L_ENCODER_OUT || gpio == R_ENCODER_OUT) {
         encoder_pulse(gpio, events);
     }
     // Ultrasonic sensor interrupt handler
@@ -143,7 +143,7 @@ void turn_right_90() {
     pwm_l = 3125;  // Left motor power for right turn
     pwm_r = 2500;  // Right motor power for right turn
 
-    int delay_ms* = 435; // Adjust based on testing for a 90-degree turn
+    int delay_ms = 435; // Adjust based on testing for a 90-degree turn
 
     // Call turn_motor with direction 1 (right turn), PWM values, and delay
     turn_motor(1, pwm_l, pwm_r, delay_ms);
@@ -152,8 +152,8 @@ void turn_right_90() {
 // Function to move forward a specific distance in cm
 void move_forward_cm(float distance) {
     // Set PWM values for forward movement
-    pwm_l = 2642;  // Adjusted left motor speed
-    pwm_r = 3045;  // Adjusted right motor speed
+    pwm_l = 2942;  // Adjusted left motor speed
+    pwm_r = 3000;  // Adjusted right motor speed
 
     // Set the motors to move forward
     uint slice_left = pwm_gpio_to_slice_num(L_MOTOR_ENA);
@@ -170,8 +170,8 @@ void move_forward_cm(float distance) {
     gpio_put(L_MOTOR_ENA, 1);  // Enable left motor
     gpio_put(R_MOTOR_ENB, 1);  // Enable right motor
 
-    // Hardcoded delay to approximate distance
-    int delay_ms = distance * 30;  // Adjust multiplier based on testing
+    // Delay to approximate distance
+    int delay_ms = distance * 32;  // Adjust multiplier based on testing
     printf("Moving forward for %d ms to cover approximately %.2f cm.\n", delay_ms, distance);
 
     sleep_ms(delay_ms);  // Wait for the calculated delay
