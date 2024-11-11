@@ -6,7 +6,7 @@
 
 // Wheel Motor Pins Left
 #define WHEEL_LEFT_PWN_PIN 4
-#define WHEEL_LEFT_OUT_PIN_1 2 //Might be reversef
+#define WHEEL_LEFT_OUT_PIN_1 2 //Might be reversed
 #define WHEEL_LEFT_OUT_PIN_2 3
 
 //Encoder Pins Right
