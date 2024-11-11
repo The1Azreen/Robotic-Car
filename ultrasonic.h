@@ -6,9 +6,7 @@
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "hardware/timer.h"
-
-#define TRIG_PIN 0
-#define ECHO_PIN 1
+#include "pins.h"
 
 extern volatile bool obstacle_detected;
 extern volatile absolute_time_t start_time;
