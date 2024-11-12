@@ -10,7 +10,7 @@
 
 #include "lwip/ip4_addr.h"
 #include "lwip/netif.h"
-#include "lwip/tcp.h"
+#include "lwip/udp.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -23,8 +23,8 @@
 
 // WIFI Configuration
 
-#define TCP_PORT 4242
-#define SERVER_IP "172.20.10.2"  // IP address of the server EDIT THIS !!! (use ipconfig on the server to get the IP address)
+#define UDP_PORT 4242
+#define SERVER_IP "255.255.255.255"  // IP address of the server EDIT THIS !!! (use ipconfig on the server to get the IP address)
 
 
 // I2C Configuration
@@ -40,7 +40,7 @@
 // 1g = 1000mg = 500 LSB
 #define SENSITIVITY_4G 2.0f/1000.0f  // Convert raw to g (±4g range)
 #define TILT_THRESHOLD 3.6f          // Trigger tilt at 3.6g
-#define SAMPLE_RATE 500              // ms between readings
+#define SAMPLE_RATE 250              // ms between readings
 
 #ifndef RUN_FREERTOS_ON_CORE
 #define RUN_FREERTOS_ON_CORE 0
@@ -48,14 +48,13 @@
 
 #define TEST_TASK_PRIORITY				( tskIDLE_PRIORITY + 1UL )
 
-static struct tcp_pcb *tcp_client_pcb;
-static struct tcp_pcb *connection_pcb = NULL;
+static struct udp_pcb *udp_client_pcb;
+static ip_addr_t server_ip;
 
-static err_t tcp_client_connected(void *arg, struct tcp_pcb *pcb, err_t err) {
-    printf("Client: Connected to server\n");
-    connection_pcb = pcb;
-    return ERR_OK;
-}
+typedef struct {
+    char direction[10];
+    int speed;
+} DataPacket;
 
 void main_task(__unused void *params) {
     if (cyw43_arch_init()) {
@@ -71,18 +70,14 @@ void main_task(__unused void *params) {
         printf("Connected to wifi.\n");
     }
 
-    tcp_client_pcb = tcp_new();
-    if (!tcp_client_pcb) {
+    udp_client_pcb = udp_new();
+    if (!udp_client_pcb) {
         printf("Client: Error creating PCB.\n");
         return;
     }
 
-
-    ip_addr_t server_ip;
     ip4addr_aton(SERVER_IP, &server_ip);
 
-    tcp_connect(tcp_client_pcb, &server_ip, TCP_PORT, tcp_client_connected);
-    
     while(true) {
         vTaskDelay(100);
     }
@@ -140,84 +135,93 @@ void acc_read_g(float *ax_g, float *ay_g, float *az_g) {
     low_pass_filter(ax_g, ay_g, az_g, 0.5f);  // Adjust alpha as needed
 }
 
-// Function to calculate tilt angles in degrees
+// Function to calculate tilt angles in degrees -> EMA
 void calculate_tilt_angles(float ax_g, float ay_g, float az_g, float *pitch, float *roll) {
     // Calculate pitch (rotation around Y-axis) and roll (rotation around X-axis)
     *pitch = atan2f(ax_g, sqrtf(ay_g * ay_g + az_g * az_g)) * 180.0f / M_PI; // Ax/sqrt(Ay^2 + Az^2) -> convert to degrees
     *roll = atan2f(ay_g, sqrtf(ax_g * ax_g + az_g * az_g)) * 180.0f / M_PI;
 }
 
-typedef struct {
-    char direction[10];
-    int speed;
-    int hour;
-    int minute;
-    int second;
-    int millisecond;
-} DataPacket;
+
 
 void send_data(char direction[10], int speed) {
-    if (connection_pcb == NULL) {
-        printf("Client: Not connected to server.\n");
+
+    if (udp_client_pcb == NULL) {
+        printf("Client: UDP PCB not initialized.\n");
         return;
     }
-
-    // Get the current time
-    time_t now;
-    time(&now);
-    struct tm *timeinfo = localtime(&now);
 
     // Create the data packet
     DataPacket packet;
     strcpy(packet.direction, direction);
     packet.speed = speed;
-    packet.hour = timeinfo->tm_hour;
-    packet.minute = timeinfo->tm_min;
-    packet.second = timeinfo->tm_sec;
-    packet.millisecond = (int)(clock() % CLOCKS_PER_SEC * 1000 / CLOCKS_PER_SEC);
 
-    if (tcp_write(connection_pcb, &packet, sizeof(packet), TCP_WRITE_FLAG_COPY) != ERR_OK) {
+    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, sizeof(packet), PBUF_RAM);
+    if (!p) {
+        printf("Client: Error allocating pbuf.\n");
+        return;
+    }
+
+    memcpy(p->payload, &packet, sizeof(packet));
+
+    static char prev_direction[10] = "";
+    static int prev_speed = -1;
+
+    if (udp_sendto(udp_client_pcb, p, &server_ip, UDP_PORT) != ERR_OK) {
         printf("Client: Error sending data.\n");
     } else {
-        tcp_output(connection_pcb);
-        printf("Client: Sent data: Direction=%s, Speed=%d, Time=%02d:%02d:%02d:%03d\n", 
-               packet.direction, packet.speed, packet.hour, packet.minute, packet.second, packet.millisecond);
+        if (strcmp(prev_direction, packet.direction) != 0 || prev_speed != packet.speed) {
+        printf("Client: Sent data: Direction=%s, Speed=%d\n", 
+                packet.direction, packet.speed);
+        }
+        strcpy(prev_direction, packet.direction);
+        prev_speed = packet.speed;
     }
+
+
+    pbuf_free(p);
 }
 
 void get_direction(float ax_g, float ay_g, float pitch, float roll) {
 
     char direction[10];
-    int pitch_int = (int) pitch;
-    int roll_int = (int) roll;
+    int speed = 0;
+
     if (ax_g < -TILT_THRESHOLD) {
-        // printf("Forward at %d speed", abs(pitch_int));
         strcpy(direction, "Forward");
-        send_data(direction, abs(pitch_int));
+        if (pitch < -70) speed = 4;
+        else if (pitch < -45) speed = 3;
+        else if (pitch < -25) speed = 2;
+        else if (pitch < -10) speed = 1;
+        else speed = 1;
     } else if (ax_g > TILT_THRESHOLD) {
-        // printf("Backward at %d speed", abs(pitch_int));
         strcpy(direction, "Backward");
-        send_data(direction, abs(pitch_int));
+        if (pitch > 70) speed = 4;
+        else if (pitch > 45) speed = 3;
+        else if (pitch > 25) speed = 2;
+        else if (pitch > 10) speed = 1;
+        else speed = 1;
     } else if (ay_g < -TILT_THRESHOLD) {
-        // printf("Left at %d speed", abs(roll_int));
         strcpy(direction, "Left");
-        send_data(direction, abs(roll_int));
+        if (roll < -70) speed = 4;
+        else if (roll < -45) speed = 3;
+        else if (roll < -25) speed = 2;
+        else if (roll < -10) speed = 1;
+        else speed = 1;
     } else if (ay_g > TILT_THRESHOLD) {
-        // printf("Right at %d speed", abs(roll_int));
         strcpy(direction, "Right");
-        send_data(direction, abs(roll_int));
-    }
-
-    if (fabsf(ax_g) < TILT_THRESHOLD && fabsf(ay_g) < TILT_THRESHOLD) {
-        // printf("Neutral");
+        if (roll > 70) speed = 4;
+        else if (roll > 45) speed = 3;
+        else if (roll > 25) speed = 2;
+        else if (roll > 10) speed = 1;
+        else speed = 1;
+    } else {
         strcpy(direction, "Neutral");
-        send_data(direction, 0);
+        speed = 0;
     }
-    
-    printf("\n");
+
+    send_data(direction, speed);
 }
-
-
 
 void accelerometer_task(__unused void *params) {
 
