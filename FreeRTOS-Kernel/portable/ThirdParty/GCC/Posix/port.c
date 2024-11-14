@@ -45,7 +45,7 @@
 * deadlocks as the FreeRTOS kernel can switch tasks while they're
 * holding a pthread mutex.
 *
-* stdio (//printf() and friends) should be called from a single task
+* stdio (printf() and friends) should be called from a single task
 * only or serialized with a FreeRTOS primitive such as a binary
 * semaphore or mutex.
 *----------------------------------------------------------*/
@@ -124,7 +124,7 @@ static void prvFatalError( const char * pcCall,
 void prvFatalError( const char * pcCall,
                            int iErrno )
 {
-    f//printf( stderr, "%s: %s\n", pcCall, strerror( iErrno ) );
+    fprintf( stderr, "%s: %s\n", pcCall, strerror( iErrno ) );
     abort();
 }
 
@@ -163,8 +163,8 @@ StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
     iRet = pthread_attr_setstack( &xThreadAttributes, pxEndOfStack, ulStackSize );
     if( iRet != 0 )
     {
-        f//printf( stderr, "[WARN] pthread_attr_setstack failed with return value: %d. Default stack will be used.\n", iRet );
-        f//printf( stderr, "[WARN] Increase the stack size to PTHREAD_STACK_MIN.\n" );
+        fprintf( stderr, "[WARN] pthread_attr_setstack failed with return value: %d. Default stack will be used.\n", iRet );
+        fprintf( stderr, "[WARN] Increase the stack size to PTHREAD_STACK_MIN.\n" );
     }
 
     thread->ev = event_create();

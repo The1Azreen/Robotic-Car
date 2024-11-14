@@ -303,7 +303,7 @@ stack. Each task needs enough space for its own use, its own interrupt
 stack frame (defined in xtensa_context.h) and space to save coprocessor
 state, if any. Several factors influence the size of the stack required,
 including the compiler optimization level and the use of the C library.
-Calls to standard output functions such as //printf() can use up a lot of
+Calls to standard output functions such as printf() can use up a lot of
 stack space. The tool xt-stack-usage is helpful in determining safe stack
 sizes for your application.
 
@@ -320,9 +320,9 @@ to use a stack size smaller than this minimum. Stack overruns can cause
 all kinds of hard-to-debug errors. It is recommended that you enable the
 FreeRTOS stack checking features during development.
 
-WARNING: The newlib //printf() function uses a lot of stack space. Be very
+WARNING: The newlib printf() function uses a lot of stack space. Be very
 careful in using it. Optionally you can use the 'libxtutil' library for
-output - it implements a subset of //printf() that has smaller code size
+output - it implements a subset of printf() that has smaller code size
 and uses far less stack space. More information about this library is in
 the Xtensa Tools documentation.
 

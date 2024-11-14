@@ -51,7 +51,7 @@
 #define RTOS_LOCK_COUNT 2
 
 /**
- * Remaps all calls to debug_//printf() to rtos_//printf().
+ * Remaps all calls to debug_printf() to rtos_printf().
  * When this is on, files should not include both rtos_support.h
  * and debug_print.h.
  */

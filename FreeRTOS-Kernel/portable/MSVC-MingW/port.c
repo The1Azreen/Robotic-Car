@@ -269,7 +269,7 @@ SYSTEM_INFO xSystemInfo;
     GetSystemInfo( &xSystemInfo );
     if( xSystemInfo.dwNumberOfProcessors <= 1 )
     {
-        //printf( "This version of the FreeRTOS Windows port can only be used on multi-core hosts.\r\n" );
+        printf( "This version of the FreeRTOS Windows port can only be used on multi-core hosts.\r\n" );
         lSuccess = pdFAIL;
     }
     else
@@ -280,7 +280,7 @@ SYSTEM_INFO xSystemInfo;
         activity interfering with FreeRTOS timing too much. */
         if( SetPriorityClass( GetCurrentProcess(), REALTIME_PRIORITY_CLASS ) == 0 )
         {
-            //printf( "SetPriorityClass() failed\r\n" );
+            printf( "SetPriorityClass() failed\r\n" );
         }
 
         /* Install the interrupt handlers used by the scheduler itself. */

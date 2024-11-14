@@ -87,7 +87,7 @@ int xt_clock_freq(void) __attribute__((deprecated));
 #undef configASSERT
 #if defined(CONFIG_FREERTOS_ASSERT_FAIL_PRINT_CONTINUE)
 #define configASSERT(a) if (unlikely(!(a))) {                           \
-        esp_rom_//printf("%s:%d (%s)- assert failed!\n", __FILE__, __LINE__,  \
+        esp_rom_printf("%s:%d (%s)- assert failed!\n", __FILE__, __LINE__,  \
                    __FUNCTION__);                                           \
     }
 #elif defined(CONFIG_FREERTOS_ASSERT_FAIL_ABORT)
@@ -96,7 +96,7 @@ int xt_clock_freq(void) __attribute__((deprecated));
 #endif
 
 #if CONFIG_FREERTOS_ASSERT_ON_UNTESTED_FUNCTION
-#define UNTESTED_FUNCTION() { esp_rom_//printf("Untested FreeRTOS function %s\r\n", __FUNCTION__); configASSERT(false); } while(0)
+#define UNTESTED_FUNCTION() { esp_rom_printf("Untested FreeRTOS function %s\r\n", __FUNCTION__); configASSERT(false); } while(0)
 #else
 #define UNTESTED_FUNCTION()
 #endif

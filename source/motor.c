@@ -5,10 +5,8 @@
 #include "hardware/gpio.h"
 #include "hardware/pwm.h"
 #include "hardware/timer.h"
-#include "motor.h"
 #include "math.h"
-#include "encoder.h"
-
+#include "motor.h"
 extern volatile float actual_speed_l;
 extern volatile float actual_speed_r;
 
@@ -189,21 +187,6 @@ void turn_motor(int direction, float pwm_l, float pwm_r, int delay_ms) {
     printf("Turn complete with delay: %d ms\n", delay_ms);
 }
 
-// Function to move forward for a set number of grids
-void move_grids(int number_of_grids)
-{
-    start_tracking(number_of_grids);
-
-    while (!complete_movement)
-    {
-        move_motor(pwm_l, pwm_r);
-        get_grids_moved(false);
-        sleep_ms(50);
-    }
-    // Stop once reached target grids
-    stop_motor();
-    // get_grids_moved(true);
-}
 
 // Function to move backwards for a set number of grids
 float calculate_control_signal(float *integral, float *prev_error, float error)
@@ -217,4 +200,16 @@ float calculate_control_signal(float *integral, float *prev_error, float error)
     *prev_error = error;
 
     return control_signal;
+}
+
+void motor_task_cyw43(void *pvParameters)
+{
+    init_motor_setup();
+    init_motor_pwm();
+
+    while (true)
+    {
+        move_motor(pwm_l, pwm_r);
+        reverse_motor(pwm_l, pwm_r);
+    }
 }

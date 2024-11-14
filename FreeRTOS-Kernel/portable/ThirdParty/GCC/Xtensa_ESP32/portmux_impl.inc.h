@@ -59,7 +59,7 @@ static inline bool __attribute__( ( always_inline ) )
                 if (owner != portMUX_FREE_VAL && owner != CORE_ID_REGVAL_PRO && owner != CORE_ID_REGVAL_APP)
                 #endif
                 {
-                    ets_//printf( "ERROR: vPortCPUAcquireMutex: mux %p is uninitialized (0x%X)! Called from %s line %d.\n", mux, owner, fnName, line );
+                    ets_printf( "ERROR: vPortCPUAcquireMutex: mux %p is uninitialized (0x%X)! Called from %s line %d.\n", mux, owner, fnName, line );
                     mux->owner = portMUX_FREE_VAL;
                 }
             #endif
@@ -102,8 +102,8 @@ static inline bool __attribute__( ( always_inline ) )
                     if( ccount_now - ccount_start > ( unsigned ) timeout_cycles )
                     {
                         #ifdef CONFIG_FREERTOS_PORTMUX_DEBUG
-                            ets_//printf( "Timeout on mux! last non-recursive lock %s line %d, curr %s line %d\n", mux->lastLockedFn, mux->lastLockedLine, fnName, line );
-                            ets_//printf( "Owner 0x%x count %d\n", mux->owner, mux->count );
+                            ets_printf( "Timeout on mux! last non-recursive lock %s line %d, curr %s line %d\n", mux->lastLockedFn, mux->lastLockedLine, fnName, line );
+                            ets_printf( "Owner 0x%x count %d\n", mux->owner, mux->count );
                         #endif
                         return false;
                     }
@@ -126,7 +126,7 @@ static inline bool __attribute__( ( always_inline ) )
                 }
                 else
                 {
-                    ets_//printf( "Recursive lock: count=%d last non-recursive lock %s line %d, curr %s line %d\n", mux->count - 1,
+                    ets_printf( "Recursive lock: count=%d last non-recursive lock %s line %d, curr %s line %d\n", mux->count - 1,
                                 mux->lastLockedFn, mux->lastLockedLine, fnName, line );
                 }
             #endif /* CONFIG_FREERTOS_PORTMUX_DEBUG */
@@ -160,7 +160,7 @@ static inline bool __attribute__( ( always_inline ) )
                     if (owner != portMUX_FREE_VAL && owner != CORE_ID_REGVAL_PRO && owner != CORE_ID_REGVAL_APP)
                     #endif
                     {
-                        ets_//printf( "ERROR: vPortCPUReleaseMutex: mux %p is invalid (0x%x)!\n", mux, mux->owner );
+                        ets_printf( "ERROR: vPortCPUReleaseMutex: mux %p is invalid (0x%x)!\n", mux, mux->owner );
                     }
                 #endif /* ifdef CONFIG_FREERTOS_PORTMUX_DEBUG */
 
@@ -171,8 +171,8 @@ static inline bool __attribute__( ( always_inline ) )
                 #ifdef CONFIG_FREERTOS_PORTMUX_DEBUG
                     if( coreID != mux->owner )
                     {
-                        ets_//printf( "ERROR: vPortCPUReleaseMutex: mux %p was already unlocked!\n", mux );
-                        ets_//printf( "Last non-recursive unlock %s line %d, curr unlock %s line %d\n", lastLockedFn, lastLockedLine, fnName, line );
+                        ets_printf( "ERROR: vPortCPUReleaseMutex: mux %p was already unlocked!\n", mux );
+                        ets_printf( "Last non-recursive unlock %s line %d, curr unlock %s line %d\n", lastLockedFn, lastLockedLine, fnName, line );
                     }
                 #endif
 
@@ -188,7 +188,7 @@ static inline bool __attribute__( ( always_inline ) )
                 {
                     assert( mux->count < 0x100 ); /* Indicates memory corruption */
                     #ifdef CONFIG_FREERTOS_PORTMUX_DEBUG_RECURSIVE
-                        ets_//printf( "Recursive unlock: count=%d last locked %s line %d, curr %s line %d\n", mux->count, lastLockedFn, lastLockedLine, fnName, line );
+                        ets_printf( "Recursive unlock: count=%d last locked %s line %d, curr %s line %d\n", mux->count, lastLockedFn, lastLockedLine, fnName, line );
                     #endif
                 }
             #endif //!CONFIG_FREERTOS_UNICORE

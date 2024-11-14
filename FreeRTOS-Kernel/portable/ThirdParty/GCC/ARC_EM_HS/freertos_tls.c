@@ -43,7 +43,7 @@
     #include "embARC_debug.h"
 
     #ifdef ENABLE_FREERTOS_TLS_DEBUG
-        #define TLS_DEBUG( fmt, ... )    EMBARC_//printf( fmt, ## __VA_ARGS__ )
+        #define TLS_DEBUG( fmt, ... )    EMBARC_PRINTF( fmt, ## __VA_ARGS__ )
     #else
         #define TLS_DEBUG( fmt, ... )
     #endif

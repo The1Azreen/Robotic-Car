@@ -10,10 +10,10 @@ void led_task_cyw43()
 
     while (true) {
         cyw43_arch_gpio_put(0, 1);
-        //printf("High");
+        printf("High");
         vTaskDelay(pdMS_TO_TICKS(DELAY));
         cyw43_arch_gpio_put(0, 0);
-        //printf("Low");
+        printf("Low");
         vTaskDelay(pdMS_TO_TICKS(DELAY));
     }
 }

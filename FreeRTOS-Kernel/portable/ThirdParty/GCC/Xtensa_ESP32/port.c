@@ -383,7 +383,7 @@ void vPortAssertIfInISR()
 {
     if( xPortInIsrContext() )
     {
-        esp_rom_//printf( "core=%d port_interruptNesting=%d\n\n", xPortGetCoreID(), port_interruptNesting[ xPortGetCoreID() ] );
+        esp_rom_printf( "core=%d port_interruptNesting=%d\n\n", xPortGetCoreID(), port_interruptNesting[ xPortGetCoreID() ] );
     }
 
     configASSERT( !xPortInIsrContext() );
@@ -395,7 +395,7 @@ void vPortAssertIfInISR()
 void vPortCPUInitializeMutex( portMUX_TYPE * mux )
 {
     #ifdef CONFIG_FREERTOS_PORTMUX_DEBUG
-        esp_rom_//printf( "Initializing mux %p\n", mux );
+        esp_rom_printf( "Initializing mux %p\n", mux );
         mux->lastLockedFn = "(never locked)";
         mux->lastLockedLine = -1;
     #endif

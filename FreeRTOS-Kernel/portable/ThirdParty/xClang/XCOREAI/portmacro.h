@@ -182,8 +182,8 @@ int xscope_gettime( void );
 
 /* Maps sprintf and snprintf to the lite version in lib_rtos_support */
 #if ( configUSE_DEBUG_SPRINTF == 1 )
-#define s//printf(...) rtos_s//printf(__VA_ARGS__)
-#define sn//printf(...) rtos_sn//printf(__VA_ARGS__)
+#define sprintf(...) rtos_sprintf(__VA_ARGS__)
+#define snprintf(...) rtos_snprintf(__VA_ARGS__)
 #endif
 
 /* Attribute for the pxCallbackFunction member of the Timer_t struct.

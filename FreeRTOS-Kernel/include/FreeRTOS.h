@@ -1196,17 +1196,17 @@
 
 #ifndef configPRINTF
 
-/* config//printf() was not defined, so define it away to nothing.  To use
- * config//printf() then define it as follows (where MyPrintFunction() is
+/* configPRINTF() was not defined, so define it away to nothing.  To use
+ * configPRINTF() then define it as follows (where MyPrintFunction() is
  * provided by the application writer):
  *
  * void MyPrintFunction(const char *pcFormat, ... );
- #define config//printf( X )   MyPrintFunction X
+ #define configPRINTF( X )   MyPrintFunction X
  *
- * Then call like a standard //printf() function, but placing brackets around
+ * Then call like a standard printf() function, but placing brackets around
  * all parameters so they are passed as a single parameter.  For example:
- * config//printf( ("Value = %d", MyVariable) ); */
-    #define config//printf( X )
+ * configPRINTF( ("Value = %d", MyVariable) ); */
+    #define configPRINTF( X )
 #endif
 
 #ifndef configMAX

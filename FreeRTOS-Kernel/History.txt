@@ -665,7 +665,7 @@ Changes between FreeRTOS V9.0.1 and FreeRTOS V10.0.0:
 	  to abort tickless idle mode entry before the tickless idle function is
 	  even called - previously it was only possible to abort from within the
 	  tickless idle function itself.
-	+ Added config//printf(), which can be defined by users to allow all libraries
+	+ Added configPRINTF(), which can be defined by users to allow all libraries
 	  to use the same print formatter.
 	+ Introduced configMAX() and configMIN() macros which default to standard
 	  max( x, y ) and min( x, y ) macro behaviour, but can be overridden if the
@@ -1633,7 +1633,7 @@ Changes between V7.0.2 and V7.1.0 released December 13 2011
 
 	Miscellaneous / maintenance:
 
-	+ Removed all calls to //printf() from the K60/IAR Kinetis demo so the project
+	+ Removed all calls to printf() from the K60/IAR Kinetis demo so the project
 	  can execute stand alone - without being connected to the debugger.
 	+ Completed the command interpreter framework.  Command handlers now receive
 	  the entire command string, giving them direct access to parameters.

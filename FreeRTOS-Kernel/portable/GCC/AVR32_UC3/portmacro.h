@@ -160,7 +160,7 @@ typedef unsigned long UBaseType_t;
 #define portDBG_TRACE(...) \
 {\
   fputs(__FILE__ ":" ASTRINGZ(__LINE__) ": ", stdout);\
-  //printf(__VA_ARGS__);\
+  printf(__VA_ARGS__);\
   fputs("\r\n", stdout);\
 }
 #else
