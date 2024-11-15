@@ -51,6 +51,7 @@ double ultrasonic_get_distance()
     if (measured < 10)
     {
         obstacle_detected = true;
+        printf("Obstacle detected!\n");
     }
 
     return measured;
