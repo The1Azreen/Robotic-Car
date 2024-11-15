@@ -5,9 +5,9 @@
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "hardware/timer.h"
-#include "pins.h"
+#include "ultrasonic.h"
 
-extern volatile bool obstacle_detected;
+
 extern volatile absolute_time_t start_time;
 extern volatile uint64_t pulse_width;
 

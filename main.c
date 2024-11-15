@@ -14,6 +14,7 @@ int main()
     xTaskCreate(led_task_cyw43, "LED_Task", 256, NULL, 1, NULL);
     xTaskCreate(print_task_cyw43, "PRINT_Task", 256, NULL, 1, NULL);
     xTaskCreate(motor_task_cyw43, "MOTOR_Task", 256, NULL, 1, NULL);
+    xTaskCreate(ultrasonic_task_cyw43, "ULTRASONIC_Task", 256, NULL, 1, NULL);
     vTaskStartScheduler();
 
     while(1){

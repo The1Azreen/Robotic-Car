@@ -4,6 +4,7 @@ add_executable(${PROJECT_NAME}
     blink.c
     print.c
     motor.c
+    ultrasonic.c
 )
 
 # Don't think there is a need to change anything here
