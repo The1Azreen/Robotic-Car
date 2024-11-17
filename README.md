@@ -1,4 +1,22 @@
-# INF2004-Project-ROBOTIC-CAR
+# INF2004-Project-P3G
+**Robotic Car Project - Team P3G**
 
-## Before Creating Your Own Branch
-Clone the test branch, and try to compile and run on your pico. It is a simple Blinky program using FreeRTOS.
+### Folder Structure
+├── CMakeLists.txt
+├── FreeRTOS-Kernel
+├── FreeRTOSConfig.h
+├── README.md
+│   ├── pico-sdk
+├── main.c
+├── pico_sdk_import.cmake
+└── source
+    ├── CMakeLists.txt
+    ├── encoder.c
+    ├── encoder.h
+    ├── hardware_init.c
+    ├── hardware_init.h
+    ├── line.c
+    ├── line.h
+    ├── motor.c
+    ├── motor.h
+
