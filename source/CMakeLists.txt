@@ -8,6 +8,7 @@ add_executable(${PROJECT_NAME}
     barcode.c
     ultrasonic.c
     transition.c
+    server.c
 )
 
 # Don't think there is a need to change anything here
@@ -21,6 +22,7 @@ target_link_libraries(${PROJECT_NAME}
     pico_stdlib 
     FreeRTOS-Kernel-Heap4
     pico_cyw43_arch_none
+    pico_cyw43_arch_lwip_threadsafe_background
     hardware_pwm
     hardware_adc
     )
