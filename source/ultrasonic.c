@@ -53,7 +53,7 @@ double ultrasonic_get_distance()
     uint64_t pulse_length = ultrasonic_get_pulse();
     double measured = pulse_length / 29.0 / 2.0;
 
-    if (measured < 20) // Threshold in centimeters
+    if (measured < 50) // Threshold in centimeters
     {
         obstacle_detected = true;
         printf("Obstacle detected at %.2f cm. Activating Emergency Brake!\n", measured);
@@ -70,7 +70,7 @@ static int removal_counter = 0;
 
 bool is_obstacle_removed() {
     double measured = ultrasonic_get_distance();
-    if (measured >= 20) {
+    if (measured >= 50) {
         removal_counter++;
         if (removal_counter >= OBSTACLE_REMOVAL_THRESHOLD) {
             removal_counter = 0;
@@ -86,9 +86,11 @@ bool is_obstacle_removed() {
 volatile bool halt_motors = false;
 
 void emergency_brake() {
-    printf("Emergency Brake Activated!\n");
+    printf("Emergency Brake Activated!\nSuspending motor, barcode,linefollowing\n");
     halt_motors = true;
     vTaskSuspend(motorTaskHandle);
+    vTaskSuspend(barcodeTaskHandle);
+    vTaskSuspend(lineFollowingTaskHandle);
     stop_motors();
 
     while (halt_motors) {
@@ -103,8 +105,10 @@ void emergency_brake() {
         }
         vTaskDelay(10);
     }
-
+    printf("Emergency Brake Deactivated!\nResuming motor, barcode,linefollowing\n");
     vTaskResume(motorTaskHandle);
+    vTaskResume(barcodeTaskHandle);
+    vTaskResume(lineFollowingTaskHandle);
 }
 
 

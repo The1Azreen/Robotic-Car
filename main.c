@@ -19,6 +19,7 @@ TaskHandle_t barcodeTaskHandle = NULL;
 
 void sensor_task(void *pvParameters) {
     bool previous_sensor_state = false;
+    printf("Starting line following task\n");
 
     while (1) {
         // Read IR sensor
@@ -67,6 +68,7 @@ void sensor_task(void *pvParameters) {
 
 int main() {
     stdio_init_all();
+    sleep_ms(4000);
     // Initialize hardware
     initialize_hardware();
     printf("Hardware initialized\n");
@@ -78,10 +80,8 @@ int main() {
     // Initialize ultrasonic sensor
     ultrasonic_init();
     printf("Ultrasonic sensor initialized\n");
-    
 
 // Create motor control task
-    sleep_ms(4000);
     xTaskCreate(motor_task, "MotorTask", 1024, NULL, 1, &motorTaskHandle);
     xTaskCreate(ultrasonic_task, "UltraSonicTask", 1024, NULL, 2, NULL);
     printf("Motor task created\n");
@@ -93,8 +93,9 @@ int main() {
 
     // Create sensor monitoring task (higher priority)
     xTaskCreate(sensor_task, "SensorTask", 1024, NULL, 2, NULL);
+    printf("Sensor task created\n");
  
-    //xTaskCreate(barcodeTask, "BarcodeTask", 1048, NULL, 3, &barcodeTaskHandle);
+    xTaskCreate(barcodeTask, "BarcodeTask", 1048, NULL, 3, &barcodeTaskHandle);
     vTaskSuspend(barcodeTaskHandle);
 
     // Start the FreeRTOS scheduler

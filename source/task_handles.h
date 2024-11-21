@@ -6,5 +6,7 @@
 
 // Declare task handles
 extern TaskHandle_t motorTaskHandle;
+extern TaskHandle_t lineFollowingTaskHandle;
+extern TaskHandle_t barcodeTaskHandle;
 
 #endif // TASK_HANDLES_H
