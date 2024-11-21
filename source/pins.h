@@ -20,4 +20,9 @@
 #define BARCODE_IR_SENSOR_PIN 27
 #define RESET_BUTTON_PIN 20 // GP20 for reset button
 
+#define TRIG_PIN 0
+#define ECHO_PIN 1
+#define E_BRAKE_LED_PIN 25  // Built-in LED on many RP2040 boards, like Raspberry Pi Pico
+
+
 #endif // PINS_H

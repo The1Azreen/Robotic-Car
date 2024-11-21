@@ -1,0 +1,20 @@
+# Ignore build directories
+/build/
+/out/
+/bin/
+/obj/
+
+# Ignore CMake-generated files
+CMakeFiles/
+CMakeCache.txt
+*.cmake
+Makefile
+
+# Ignore compiled object files
+*.o
+*.a
+*.so
+
+# Ignore logs and temporary files
+*.log
+*.tmp

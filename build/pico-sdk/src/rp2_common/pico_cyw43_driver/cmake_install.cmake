@@ -39,6 +39,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/Users/sbstfrnndz/Desktop/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9/build/pico-sdk/src/rp2_common/pico_cyw43_driver/cybt_shared_bus/cmake_install.cmake")
+  include("/Users/sbstfrnndz/Documents/GitHub/Robotic-Car/build/pico-sdk/src/rp2_common/pico_cyw43_driver/cybt_shared_bus/cmake_install.cmake")
 endif()
 

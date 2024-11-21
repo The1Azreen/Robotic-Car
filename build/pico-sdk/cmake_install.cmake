@@ -39,16 +39,16 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/Users/sbstfrnndz/Desktop/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9/build/pico-sdk/tools/cmake_install.cmake")
+  include("/Users/sbstfrnndz/Documents/GitHub/Robotic-Car/build/pico-sdk/tools/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/Users/sbstfrnndz/Desktop/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9/build/pico-sdk/src/cmake_install.cmake")
+  include("/Users/sbstfrnndz/Documents/GitHub/Robotic-Car/build/pico-sdk/src/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/Users/sbstfrnndz/Desktop/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9/build/pico-sdk/docs/cmake_install.cmake")
+  include("/Users/sbstfrnndz/Documents/GitHub/Robotic-Car/build/pico-sdk/docs/cmake_install.cmake")
 endif()
 
