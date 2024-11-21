@@ -43,10 +43,7 @@ void line_following_task(void *pvParameters) {
 
     int line_lost_counter = 0; // Initialize line lost counter
 
-    printf("Starting line following task\n");
-
     while (true) {
-        //printf("Starting line following task\n");
         // Read encoder counts
         int l_ticks = read_and_reset_encoder(&l_encoder_count);
         int r_ticks = read_and_reset_encoder(&r_encoder_count);
@@ -106,15 +103,17 @@ void line_following_task(void *pvParameters) {
 
                 vTaskDelay(pdMS_TO_TICKS(5)); // Adjust delay as needed
             } else if (line_lost_counter >= 3) {
-                // Turn left indefinitely until line is detected again
-                // printf("Line lost multiple times, turning left indefinitely until line found.\n");
+                // Extend the second adjustment duration
+                // Adjust motors for a sharper turn
+                uint16_t adjusted_left_speed = l_motor_speed / 4;
+                if (adjusted_left_speed < MINIMUM_SPEED) {
+                    adjusted_left_speed = MINIMUM_SPEED;
+                }
+                uint16_t adjusted_right_speed = r_motor_speed;
+                left_motor(true, adjusted_left_speed);
+                right_motor(true, adjusted_right_speed);
 
-                // Set motors to turn left indefinitely
-                left_motor(true, 0); // Stop left motor
-                right_motor(true, r_motor_speed);
-                // printf("Turning left indefinitely: L:%d R:%d\n", 0, r_motor_speed);
-
-                // No need to adjust speeds further; will continue until line is found
+                vTaskDelay(pdMS_TO_TICKS(40)); // Increase delay to make the adjustment longer
             }
         }
 
