@@ -17,4 +17,7 @@
 // Sensor pin
 #define SENSOR_PIN 26  // GPIO pin for the IR sensor
 
+#define BARCODE_IR_SENSOR_PIN 27
+#define RESET_BUTTON_PIN 20 // GP20 for reset button
+
 #endif // PINS_H

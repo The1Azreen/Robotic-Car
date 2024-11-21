@@ -9,6 +9,7 @@
 #include <stdio.h>
 // hardware_init.c (Add these at the top)
 #include "encoder.h"
+
 // Function to set up PWM for motor enable pins
 void setup_pwm(uint gpio_pin, uint slice_num) {
     gpio_set_function(gpio_pin, GPIO_FUNC_PWM);
@@ -50,6 +51,16 @@ void initialize_hardware() {
     // Initialize IR sensor pin
     gpio_init(SENSOR_PIN);
     gpio_set_dir(SENSOR_PIN, GPIO_IN);
+    
+    gpio_set_dir(BARCODE_IR_SENSOR_PIN, GPIO_IN);
+    gpio_init(RESET_BUTTON_PIN);
+    gpio_set_dir(RESET_BUTTON_PIN, GPIO_IN);
+    gpio_pull_up(RESET_BUTTON_PIN);
+
+
+    gpio_init(BARCODE_IR_SENSOR_PIN);
+    gpio_set_dir(BARCODE_IR_SENSOR_PIN, GPIO_IN);
+    
 
     printf("Hardware Initialization Complete.\n");
 }

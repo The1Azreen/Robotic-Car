@@ -1,4 +1,4 @@
-// Padded and checksummed version of: /Users/sbstfrnndz/Desktop/version control/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9/build/pico-sdk/src/rp2040/boot_stage2/bs2_default.bin
+// Padded and checksummed version of: /Users/sbstfrnndz/Desktop/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9/build/pico-sdk/src/rp2040/boot_stage2/bs2_default.bin
 
 .cpu cortex-m0plus
 .thumb

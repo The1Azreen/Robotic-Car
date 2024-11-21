@@ -81,7 +81,7 @@ rule CXX_EXECUTABLE_LINKER__FreeRTOS-Template_Release
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = /Users/sbstfrnndz/.pico-sdk/cmake/v3.28.6/CMake.app/Contents/bin/cmake --regenerate-during-build -S"/Users/sbstfrnndz/Desktop/version control/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9" -B"/Users/sbstfrnndz/Desktop/version control/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9/build"
+  command = /Users/sbstfrnndz/.pico-sdk/cmake/v3.28.6/CMake.app/Contents/bin/cmake --regenerate-during-build -S"/Users/sbstfrnndz/Desktop/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9" -B"/Users/sbstfrnndz/Desktop/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9/build"
   description = Re-running CMake...
   generator = 1
 

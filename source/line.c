@@ -58,7 +58,7 @@ void line_following_task(void *pvParameters) {
 
         // Clamp speeds to 0-255 range
         if (l_motor_speed > 255) l_motor_speed = 255;
-        if (r_motor_speed > 255) r_motor_speed = 255;
+        if (r_motor_speed > 255 ) r_motor_speed = 255;
 
         // Read IR sensor and adjust motor control
         bool sensor_value = gpio_get(SENSOR_PIN);
@@ -67,14 +67,14 @@ void line_following_task(void *pvParameters) {
             line_lost_counter = 0;
             left_motor(true, l_motor_speed);
             right_motor(true, r_motor_speed);
-            printf("Moving forward: L:%d R:%d\n", l_motor_speed, r_motor_speed);
+            // printf("Moving forward: L:%d R:%d\n", l_motor_speed, r_motor_speed);
         } else {
             // Line lost
             line_lost_counter++;
 
             if (line_lost_counter == 1) {
                 // First readjustment
-                printf("Line lost, first readjustment. Turning left.\n");
+                // printf("Line lost, first readjustment. Turning left.\n");
 
                 // Adjust motors to turn left (e.g., slow down left motor)
                 uint16_t adjusted_left_speed = l_motor_speed / 2;
@@ -84,12 +84,12 @@ void line_following_task(void *pvParameters) {
                 uint16_t adjusted_right_speed = r_motor_speed;
                 left_motor(true, adjusted_left_speed);
                 right_motor(true, adjusted_right_speed);
-                printf("Turning left: L:%d R:%d\n", adjusted_left_speed, adjusted_right_speed);
+                // printf("Turning left: L:%d R:%d\n", adjusted_left_speed, adjusted_right_speed);
 
                 vTaskDelay(pdMS_TO_TICKS(10)); // Adjust delay as needed
             } else if (line_lost_counter == 2) {
                 // Second readjustment
-                printf("Line lost, second readjustment. Turning left more sharply.\n");
+                // printf("Line lost, second readjustment. Turning left more sharply.\n");
 
                 // Adjust motors for a sharper turn
                 uint16_t adjusted_left_speed = l_motor_speed / 4;
@@ -99,23 +99,23 @@ void line_following_task(void *pvParameters) {
                 uint16_t adjusted_right_speed = r_motor_speed;
                 left_motor(true, adjusted_left_speed);
                 right_motor(true, adjusted_right_speed);
-                printf("Turning left sharper: L:%d R:%d\n", adjusted_left_speed, adjusted_right_speed);
+                // printf("Turning left sharper: L:%d R:%d\n", adjusted_left_speed, adjusted_right_speed);
 
                 vTaskDelay(pdMS_TO_TICKS(5)); // Adjust delay as needed
             } else if (line_lost_counter >= 3) {
                 // Turn left indefinitely until line is detected again
-                printf("Line lost multiple times, turning left indefinitely until line found.\n");
+                // printf("Line lost multiple times, turning left indefinitely until line found.\n");
 
                 // Set motors to turn left indefinitely
                 left_motor(true, 0); // Stop left motor
                 right_motor(true, r_motor_speed);
-                printf("Turning left indefinitely: L:%d R:%d\n", 0, r_motor_speed);
+                // printf("Turning left indefinitely: L:%d R:%d\n", 0, r_motor_speed);
 
                 // No need to adjust speeds further; will continue until line is found
             }
         }
 
         // Delay to match control interval (e.g., 100ms)
-        vTaskDelay(pdMS_TO_TICKS(1));
+        vTaskDelay(pdMS_TO_TICKS(0.5));
     }
 }

@@ -1,4 +1,4 @@
-# Install script for directory: /Users/sbstfrnndz/Desktop/version control/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9/source
+# Install script for directory: /Users/sbstfrnndz/Desktop/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9/source
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
