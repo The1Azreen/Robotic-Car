@@ -3,6 +3,8 @@
 #include "hardware/gpio.h"
 #include "hardware/pwm.h"
 #include <stdio.h>
+#include "FreeRTOS.h"
+#include "task.h"
 
 // Function to initialize motors
 void motor_init(void) {
@@ -106,4 +108,23 @@ void move_robot(Direction direction, uint8_t speed_level) {
 void stop_motors(void) {
     left_motor(true, 0);
     right_motor(true, 0);
+}
+
+
+void motor_task(void *pvParameters) {
+    while (1) {
+        for (int speed_level = 0; speed_level <= 5; speed_level++) {
+            // Move forward at the current speed level
+            move_robot(DIRECTION_FORWARD, speed_level);
+            printf("Moving FORWARD - Speed Level: %d\n", speed_level);
+
+            // Maintain each speed for 3 seconds
+            vTaskDelay(pdMS_TO_TICKS(3000)); // Wait for 3 seconds
+        }
+
+        // Stop for 1 second before repeating
+        stop_motors();
+        printf("Stopping for 1 second\n");
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
 }

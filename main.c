@@ -8,28 +8,14 @@
 #include "encoder.h"
 #include "line.h"
 #include "barcode.h"
+#include "ultrasonic.h"
+#include "task_handles.h"
+
 // Declare task handles
 TaskHandle_t motorTaskHandle = NULL;
 TaskHandle_t lineFollowingTaskHandle = NULL;
 TaskHandle_t barcodeTaskHandle = NULL;
 
-void motor_task(void *pvParameters) {
-    while (1) {
-        for (int speed_level = 0; speed_level <= 5; speed_level++) {
-            // Move forward at the current speed level
-            move_robot(DIRECTION_FORWARD, speed_level);
-            printf("Moving FORWARD - Speed Level: %d\n", speed_level);
-
-            // Maintain each speed for 3 seconds
-            vTaskDelay(pdMS_TO_TICKS(3000)); // Wait for 3 seconds
-        }
-
-        // Stop for 1 second before repeating
-        stop_motors();
-        printf("Stopping for 1 second\n");
-        vTaskDelay(pdMS_TO_TICKS(1000));
-    }
-}
 
 void sensor_task(void *pvParameters) {
     bool previous_sensor_state = false;
@@ -80,19 +66,27 @@ void sensor_task(void *pvParameters) {
 
 
 int main() {
+    stdio_init_all();
     // Initialize hardware
     initialize_hardware();
-
+    printf("Hardware initialized\n");
     encoder_init();
-
+    printf("Encoder initialized\n");
     // Initialize motors
     motor_init();
-    stdio_init_all();
+    printf("Motors initialized\n");
+    // Initialize ultrasonic sensor
+    ultrasonic_init();
+    printf("Ultrasonic sensor initialized\n");
+    
 
 // Create motor control task
     sleep_ms(4000);
     xTaskCreate(motor_task, "MotorTask", 1024, NULL, 1, &motorTaskHandle);
+    xTaskCreate(ultrasonic_task, "UltraSonicTask", 1024, NULL, 2, NULL);
     printf("Motor task created\n");
+
+    
     // Create line following task (start suspended)
     xTaskCreate(line_following_task, "LineFollowTask", 1024, NULL, 2, &lineFollowingTaskHandle);
     vTaskSuspend(lineFollowingTaskHandle);
@@ -100,7 +94,7 @@ int main() {
     // Create sensor monitoring task (higher priority)
     xTaskCreate(sensor_task, "SensorTask", 1024, NULL, 2, NULL);
  
-    xTaskCreate(barcodeTask, "BarcodeTask", 1048, NULL, 3, &barcodeTaskHandle);
+    //xTaskCreate(barcodeTask, "BarcodeTask", 1048, NULL, 3, &barcodeTaskHandle);
     vTaskSuspend(barcodeTaskHandle);
 
     // Start the FreeRTOS scheduler

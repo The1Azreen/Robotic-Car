@@ -9,6 +9,7 @@
 #include <stdio.h>
 // hardware_init.c (Add these at the top)
 #include "encoder.h"
+#include "ultrasonic.h"
 
 // Function to set up PWM for motor enable pins
 void setup_pwm(uint gpio_pin, uint slice_num) {
@@ -61,6 +62,9 @@ void initialize_hardware() {
     gpio_init(BARCODE_IR_SENSOR_PIN);
     gpio_set_dir(BARCODE_IR_SENSOR_PIN, GPIO_IN);
     
-
+    // Initialize ultrasonic sensor pins
+    ultrasonic_init();
+    
     printf("Hardware Initialization Complete.\n");
+
 }

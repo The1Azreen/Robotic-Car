@@ -24,5 +24,6 @@ void move_robot(Direction direction, uint8_t speed_level);
 void stop_motors(void);
 void left_motor(bool forward, uint16_t speed);
 void right_motor(bool forward, uint16_t speed);
+void motor_task(void *pvParameters);
 
 #endif // MOTOR_H

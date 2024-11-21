@@ -1,4 +1,4 @@
-# Install script for directory: /Users/sbstfrnndz/Desktop/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9
+# Install script for directory: /Users/sbstfrnndz/Documents/GitHub/Robotic-Car
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,9 +39,9 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/Users/sbstfrnndz/Desktop/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9/build/FREERTOS_KERNEL/cmake_install.cmake")
-  include("/Users/sbstfrnndz/Desktop/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9/build/pico-sdk/cmake_install.cmake")
-  include("/Users/sbstfrnndz/Desktop/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9/build/source/cmake_install.cmake")
+  include("/Users/sbstfrnndz/Documents/GitHub/Robotic-Car/build/FREERTOS_KERNEL/cmake_install.cmake")
+  include("/Users/sbstfrnndz/Documents/GitHub/Robotic-Car/build/pico-sdk/cmake_install.cmake")
+  include("/Users/sbstfrnndz/Documents/GitHub/Robotic-Car/build/source/cmake_install.cmake")
 
 endif()
 
@@ -53,5 +53,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/sbstfrnndz/Desktop/Robotic-Car(ultrasonic_stable)_(e-brake_5_count)_(PID)_(line_detector)_(bare_metal)_(im_him)_(reading)_(better)_v9/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/sbstfrnndz/Documents/GitHub/Robotic-Car/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

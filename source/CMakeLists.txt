@@ -6,6 +6,7 @@ add_executable(${PROJECT_NAME}
     motor.c
     encoder.c
     barcode.c
+    ultrasonic.c
 )
 
 # Don't think there is a need to change anything here
