@@ -9,6 +9,7 @@
 #include "pico/stdlib.h"
 #include "server.h"
 
+
 // Declare task handles
 TaskHandle_t wifiTaskHandle = NULL;
 
@@ -30,8 +31,14 @@ void sensor_task(void *pvParameters) {
         if (sensor_value == 0 && !sensor_activated) {
             printf("IR sensor activated. Switching to line following mode & barcode reading.\n");
             // Flag enable to disable wifi task
+            printf("Priority of wifi task: %d\n", uxTaskPriorityGet(wifiTaskHandle));
+            vTaskPrioritySet(wifiTaskHandle, 0);
             set_sensor_flag(true);
             sensor_activated = true;
+            // print priority of wifi task
+            printf("Priority of wifi task: %d\n", uxTaskPriorityGet(wifiTaskHandle));
+
+            vTaskDelete(NULL);
         }
 
         // Delay before next read

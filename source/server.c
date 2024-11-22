@@ -70,6 +70,7 @@ static void udp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, cons
 
     // Check if we have a complete DataPacket
     while (buffer_len >= sizeof(DataPacket)) {
+        printf("meow\n");
         DataPacket packet;
         memcpy(&packet, buffer, sizeof(DataPacket));
         Direction dir;
