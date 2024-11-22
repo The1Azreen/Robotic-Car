@@ -79,6 +79,7 @@ void move_robot(Direction direction, uint8_t speed_level) {
             printf("Moving FORWARD - Speed Level: %d, PWM Speed: %d\n", speed_level, speed);
             break;
         case DIRECTION_BACKWARD:
+            if (speed_level < 3) speed_level = 3;
             left_motor(false, speed);
             right_motor(false, speed);
             printf("Moving BACKWARD - Speed Level: %d, PWM Speed: %d\n", speed_level, speed);

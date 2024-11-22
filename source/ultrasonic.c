@@ -41,9 +41,9 @@ void ultrasonic_init()
 uint64_t ultrasonic_get_pulse()
 {
     gpio_put(TRIG_PIN, 1);
-    sleep_ms(10);  // Replace vTaskDelay with sleep_ms
+    vTaskDelay(pdMS_TO_TICKS(10));  // Use vTaskDelay instead of sleep_ms
     gpio_put(TRIG_PIN, 0);
-    sleep_ms(1);
+    vTaskDelay(pdMS_TO_TICKS(1));
 
     return pulse_width;
 }
@@ -88,27 +88,38 @@ volatile bool halt_motors = false;
 void emergency_brake() {
     printf("Emergency Brake Activated!\nSuspending motor, barcode,linefollowing\n");
     halt_motors = true;
+    /*
     vTaskSuspend(motorTaskHandle);
     vTaskSuspend(barcodeTaskHandle);
     vTaskSuspend(lineFollowingTaskHandle);
-    stop_motors();
+    */
+
+    printf("Attempting to suspend Wi-Fi task...\n");
+    if (wifiTaskHandle != NULL) {
+        vTaskSuspend(wifiTaskHandle);
+        printf("Wi-Fi task suspended successfully\n");
+    } else {
+        printf("Wi-Fi task handle is NULL. Suspension failed\n");
+    }
 
     while (halt_motors) {
         gpio_put(E_BRAKE_LED_PIN, 1);
-        sleep_ms(500);
+        move_robot(DIRECTION_NEUTRAL, 0);
         gpio_put(E_BRAKE_LED_PIN, 0);
-        sleep_ms(500);
 
         if (is_obstacle_removed()) {
             printf("Obstacle removed. Resuming operation...\n");
             halt_motors = false;
         }
-        vTaskDelay(10);
     }
     printf("Emergency Brake Deactivated!\nResuming motor, barcode,linefollowing\n");
+    /*
     vTaskResume(motorTaskHandle);
     vTaskResume(barcodeTaskHandle);
     vTaskResume(lineFollowingTaskHandle);
+    */
+    printf("resume wifi task\n");
+    vTaskResume(wifiTaskHandle);
 }
 
 
@@ -120,6 +131,6 @@ void ultrasonic_task(void *pvParameters)
     {
         double distance = ultrasonic_get_distance();
         printf("Distance: %.2f cm\n", distance);
-        vTaskDelay(50);
+        vTaskDelay(100);
     }
 }
