@@ -22,6 +22,8 @@
 #include "hardware/gpio.h"
 #include "hardware/adc.h"
 
+#include "ultrasonic.h"
+
 #define UDP_PORT 4242
 
 #ifndef RUN_FREERTOS_ON_CORE
@@ -39,8 +41,6 @@ static int buffer_len = 0;
 static struct udp_pcb *udp_server_pcb;
 
 static DataPacket last_packet = { .direction = "", .speed = -1 };
-
-
 
 static void udp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port) {
     if (!p) {
@@ -70,15 +70,15 @@ static void udp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, cons
             last_packet = packet;
         }
         Direction dir;
-        if (strcmp(packet.direction, "Forward") == 0) {
+        if (strcmp(packet.direction, "Forward") == 0 && get_obstacle_flag() == false) {
             dir = DIRECTION_FORWARD;
-        } else if (strcmp(packet.direction, "Backward") == 0) {
+        } else if (strcmp(packet.direction, "Backward") == 0 && get_obstacle_flag() == false) {
             dir = DIRECTION_BACKWARD;
-        } else if (strcmp(packet.direction, "Left") == 0) {
+        } else if (strcmp(packet.direction, "Left") == 0 && get_obstacle_flag() == false) {
             dir = DIRECTION_LEFT;
-        } else if (strcmp(packet.direction, "Right") == 0) {
+        } else if (strcmp(packet.direction, "Right") == 0 && get_obstacle_flag() == false) {
             dir = DIRECTION_RIGHT;
-        }else if (strcmp(packet.direction, "Neutral") == 0) {
+        }else if (strcmp(packet.direction, "Neutral") == 0 || get_obstacle_flag() == true) {
             dir = DIRECTION_NEUTRAL;
         }
          else {

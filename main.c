@@ -27,10 +27,10 @@ int main() {
     sleep_ms(2000);
 
     // Create Wi-Fi task with sufficient stack size
-    xTaskCreate(wifi_task, "WifiTask", 8192, NULL, 2, &wifiTaskHandle);
+    xTaskCreate(wifi_task, "WifiTask", 8192, NULL, 1, &wifiTaskHandle);
     printf("Wi-Fi task created\n");
 
-    xTaskCreate(ultrasonic_task, "UltrasonicTask", 2048, NULL, 2, NULL);
+    xTaskCreate(ultrasonic_task, "UltrasonicTask", 4096, NULL, 3, NULL);
     printf("Ultrasonic task created\n");
     // xTaskCreate(sensor_task, "SensorTask", 2048, NULL, 1, NULL);
 

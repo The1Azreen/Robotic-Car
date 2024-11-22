@@ -8,11 +8,19 @@
 #define TRIG_PIN 0
 #define ECHO_PIN 1
 
+// Define constants
+#define DISTANCE_THRESHOLD 20.0
+#define OBSTACLE_REMOVAL_THRESHOLD 5
+
+
+
 // Function prototypes
 void ultrasonic_init();
 uint64_t ultrasonic_get_pulse();
 double ultrasonic_get_distance();
 void emergency_brake();
 void ultrasonic_task(void *pvParameters);
+bool get_obstacle_flag();
+void set_obstacle_flag(bool flag);
 
 #endif // ULTRASONIC_H

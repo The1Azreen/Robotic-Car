@@ -8,14 +8,22 @@
 #include "pins.h"
 #include "task_handles.h"
 #include "motor.h"
-
-// Define constants
-#define DISTANCE_THRESHOLD 20.0
-#define OBSTACLE_REMOVAL_THRESHOLD 5
+#include "ultrasonic.h"
 
 volatile absolute_time_t start_time;
 volatile uint64_t pulse_width = 0;
 volatile bool threshold_crossed = false;
+
+// Flag for obstacle detection
+bool obstacle_flag = false;
+
+bool get_obstacle_flag() {
+    return obstacle_flag;
+}
+
+void set_obstacle_flag(bool flag) {
+    obstacle_flag = flag;
+}
 
 // GPIO Interrupt Handler
 void echo_pulse_handler(uint gpio, uint32_t events) {
@@ -59,7 +67,7 @@ void ultrasonic_task(void *pvParameters) {
     while (1) {
         // Trigger ultrasonic pulse
         trigger_ultrasonic_pulse();
-        vTaskDelay(pdMS_TO_TICKS(50)); // Allow time for the echo to return
+        vTaskDelay(pdMS_TO_TICKS(200)); // Allow time for the echo to return
 
         // Calculate distance
         double distance = calculate_distance();
@@ -67,39 +75,14 @@ void ultrasonic_task(void *pvParameters) {
 
         // Check if the obstacle is detected
         if (distance < DISTANCE_THRESHOLD) {
-            removal_counter = 0; // Reset removal counter
-            printf("Obstacle detected: %.2f cm\n", distance);
-
-            // Stay in the loop, continuously stopping motors
-            while (1) {
-                stop_motors();
-
-                // Trigger ultrasonic pulse again for reevaluation
-                trigger_ultrasonic_pulse();
-                vTaskDelay(pdMS_TO_TICKS(50)); // Wait for echo
-                distance = calculate_distance();
-
-                printf("Re-evaluating Distance: %.2f cm\n", distance);
-
-                // Exit the loop only if obstacle is removed for 5 consecutive scans
-                if (distance >= DISTANCE_THRESHOLD) {
-                    removal_counter++;
-                    printf("No obstacle detected (Counter: %d)\n", removal_counter);
-
-                    if (removal_counter >= OBSTACLE_REMOVAL_THRESHOLD) {
-                        printf("Obstacle cleared.\n");
-                        break; // Exit the stop loop
-                    }
-                } else {
-                    removal_counter = 0; // Reset counter if obstacle is still present
-                }
-
-                // Delay before the next reevaluation
-                vTaskDelay(pdMS_TO_TICKS(100));
-            }
+            printf("Obstacle Detected\n");
+            obstacle_flag = true;
+        } else {
+            printf("Obstacle Removed\n");
+            obstacle_flag = false;
         }
 
-        // Delay before the next main scan if no obstacle
+        // Delay before the next main scan
         vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
