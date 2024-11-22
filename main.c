@@ -8,6 +8,7 @@
 #include "pico/cyw43_arch.h"
 #include "pico/stdlib.h"
 #include "server.h"
+#include "transition.h"
 
 // Declare task handles
 TaskHandle_t wifiTaskHandle = NULL;
@@ -26,10 +27,12 @@ int main() {
     sleep_ms(2000);
 
     // Create Wi-Fi task with sufficient stack size
-    xTaskCreate(wifi_task, "WifiTask", 4096, NULL, 3, &wifiTaskHandle);
+    xTaskCreate(wifi_task, "WifiTask", 8192, NULL, 2, &wifiTaskHandle);
     printf("Wi-Fi task created\n");
-    xTaskCreate(ultrasonic_task, "UltrasonicTask", 2048, NULL, 1, NULL);
+
+    xTaskCreate(ultrasonic_task, "UltrasonicTask", 2048, NULL, 2, NULL);
     printf("Ultrasonic task created\n");
+    // xTaskCreate(sensor_task, "SensorTask", 2048, NULL, 1, NULL);
 
     // Start the FreeRTOS scheduler
     vTaskStartScheduler();

@@ -15,7 +15,8 @@ void sensor_task(void *pvParameters) {
     while (1) {
         // Read IR sensor
         bool sensor_value = gpio_get(SENSOR_PIN);
-
+        printf("Sensor value: %d\n", sensor_value);
+        /*
         if (sensor_value && !previous_sensor_state) {
             // Line detected
             printf("IR sensor activated. Switching to line following mode & barcode reading.\n");
@@ -44,8 +45,9 @@ void sensor_task(void *pvParameters) {
 
         // Update previous sensor state
         previous_sensor_state = sensor_value;
-
+        */
         // Delay before next read
         vTaskDelay(pdMS_TO_TICKS(100)); // Adjust as needed
     }
+
 }

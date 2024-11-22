@@ -8,6 +8,7 @@
 #include "encoder.h"
 #include <stdio.h>
 #include "encoder.h"
+#include "task_handles.h"
 
 #define MINIMUM_SPEED 100  // Adjust based on testing
 
