@@ -43,7 +43,10 @@ void line_following_task(void *pvParameters) {
 
     int line_lost_counter = 0; // Initialize line lost counter
 
+    printf("Starting line following task\n");
+
     while (true) {
+        //printf("Starting line following task\n");
         // Read encoder counts
         int l_ticks = read_and_reset_encoder(&l_encoder_count);
         int r_ticks = read_and_reset_encoder(&r_encoder_count);

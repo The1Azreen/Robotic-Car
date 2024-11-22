@@ -6,5 +6,8 @@
 
 // Declare task handles
 extern TaskHandle_t motorTaskHandle;
+extern TaskHandle_t lineFollowingTaskHandle;
+extern TaskHandle_t barcodeTaskHandle;
+extern TaskHandle_t wifiTaskHandle;
 
 #endif // TASK_HANDLES_H

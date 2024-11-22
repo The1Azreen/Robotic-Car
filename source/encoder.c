@@ -3,6 +3,7 @@
 #include "hardware/gpio.h"
 #include "hardware/irq.h"
 #include "pins.h"
+#include <stdio.h>
 
 // Initialize encoder counts
 volatile int l_encoder_count = 0;
@@ -37,4 +38,18 @@ int read_and_reset_encoder(volatile int *encoder_count) {
     int count = *encoder_count;
     *encoder_count = 0;
     return count;
+}
+// Function to calculate and print distance traveled in cm
+void print_distance_cm(void *pvParameters) {
+    const float counts_per_rev = 360.0; // Adjust based on your encoder
+    const float wheel_diameter_cm = 10.0; // Adjust based on your wheel
+    const float pi = 3.1415926535;
+
+    int left_counts = read_and_reset_encoder(&l_encoder_count);
+    int right_counts = read_and_reset_encoder(&r_encoder_count);
+
+    float left_distance = (left_counts / counts_per_rev) * (pi * wheel_diameter_cm);
+    float right_distance = (right_counts / counts_per_rev) * (pi * wheel_diameter_cm);
+
+    printf("Left Distance: %.2f cm, Right Distance: %.2f cm\n", left_distance, right_distance);
 }
