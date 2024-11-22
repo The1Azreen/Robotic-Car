@@ -28,4 +28,4 @@ void track_bars();
 int get_denoised_state();
 void add_to_message(char character);
 
-void barcodeTask(void *pvParameters);
+void barcode_task(void *pvParameters);

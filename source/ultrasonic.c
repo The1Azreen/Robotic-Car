@@ -13,6 +13,16 @@
 volatile absolute_time_t start_time;
 volatile uint64_t pulse_width = 0;
 volatile bool threshold_crossed = false;
+//Distance threshold
+double DISTANCE_THRESHOLD = 20.0;
+
+void set_distance_threshold(double threshold) {
+    DISTANCE_THRESHOLD = threshold;
+}
+
+double get_distance_threshold() {
+    return DISTANCE_THRESHOLD;
+}
 
 // Flag for obstacle detection
 bool obstacle_flag = false;
@@ -77,9 +87,9 @@ void ultrasonic_task(void *pvParameters) {
         } else {
             obstacle_flag = false;
         }
-
+        printf("Distance: %.2f cm\n", distance);
         // Delay before the next main scan
         vTaskDelay(pdMS_TO_TICKS(100));
-        printf("flag: %d\n", obstacle_flag);
+        printf("obstacle flag: %d\n", obstacle_flag);
     }
 }

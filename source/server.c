@@ -70,19 +70,18 @@ static void udp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, cons
 
     // Check if we have a complete DataPacket
     while (buffer_len >= sizeof(DataPacket)) {
-        printf("meow\n");
         DataPacket packet;
         memcpy(&packet, buffer, sizeof(DataPacket));
         Direction dir;
-        if (strcmp(packet.direction, "Forward") == 0 && get_obstacle_flag() == false && get_sensor_flag() == 0) {
+        if (strcmp(packet.direction, "Forward") == 0 && get_obstacle_flag() == false) {
             dir = DIRECTION_FORWARD;
-        } else if (strcmp(packet.direction, "Backward") == 0 && get_obstacle_flag() == false && get_sensor_flag() == 0) {
+        } else if (strcmp(packet.direction, "Backward") == 0 && get_obstacle_flag() == false) {
             dir = DIRECTION_BACKWARD;
-        } else if (strcmp(packet.direction, "Left") == 0 && get_obstacle_flag() == false && get_sensor_flag() == 0) {
+        } else if (strcmp(packet.direction, "Left") == 0 && get_obstacle_flag() == false) {
             dir = DIRECTION_LEFT;
-        } else if (strcmp(packet.direction, "Right") == 0 && get_obstacle_flag() == false && get_sensor_flag() == 0) {
+        } else if (strcmp(packet.direction, "Right") == 0 && get_obstacle_flag() == false) {
             dir = DIRECTION_RIGHT;
-        }else if (strcmp(packet.direction, "Neutral") == 0 || get_obstacle_flag() == true || get_sensor_flag() == 1) {
+        } else if (strcmp(packet.direction, "Neutral") == 0 || get_obstacle_flag() == true) {
             dir = DIRECTION_NEUTRAL;
         }
          else {

@@ -280,7 +280,7 @@ void track_bars()
     }
 }
 
-void barcodeTask(void *pvParameters)
+void barcode_task(void *pvParameters)
 {
     printf("IR Bar Pattern Analyzer (Code 39)\n");
     printf("0 = narrow bar, 1 = wide bar\n");

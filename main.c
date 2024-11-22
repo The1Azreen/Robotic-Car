@@ -8,36 +8,47 @@
 #include "pico/cyw43_arch.h"
 #include "pico/stdlib.h"
 #include "server.h"
+#include "barcode.h"
+#include "line.h"
 
 
 // Declare task handles
 TaskHandle_t wifiTaskHandle = NULL;
+TaskHandle_t lineFollinwgTaskHandle = NULL;
+TaskHandle_t barcodeTaskHandle= NULL;
+bool sensor_activated = false;
 
 // Forward declaration of wifi_task
 void wifi_task(void *params);
 
 
 void sensor_task(void *pvParameters) {
-    bool sensor_activated = false;
+    bool sensor_fla = false;
     printf("Starting sensor task\n");
-
-    vTaskDelay(pdMS_TO_TICKS(10000)); // Delay before starting
-
     while (1) {
         // Read IR sensor
         bool sensor_value = gpio_get(SENSOR_PIN);
+        set_sensor_flag(true);
+        set_threshold_distance(50.0);
         printf("Sensor value: %d\n", sensor_value);
+        //print sensor flag
+        printf("Sensor flag: %d\n", get_sensor_flag());
+        //print obstacle flag
+        printf("Obstacle flag: %d\n", get_obstacle_flag());
         
-        if (sensor_value == 0 && !sensor_activated) {
+        if (sensor_value == 1 && !sensor_activated) {
             printf("IR sensor activated. Switching to line following mode & barcode reading.\n");
             // Flag enable to disable wifi task
             printf("Priority of wifi task: %d\n", uxTaskPriorityGet(wifiTaskHandle));
             vTaskPrioritySet(wifiTaskHandle, 0);
-            set_sensor_flag(true);
+            set_sensor_flag(false);
             sensor_activated = true;
             // print priority of wifi task
             printf("Priority of wifi task: %d\n", uxTaskPriorityGet(wifiTaskHandle));
-
+            //resume the line following task
+            vTaskResume(lineFollinwgTaskHandle);
+            //resume the barcode task
+            vTaskResume(barcodeTaskHandle);
             vTaskDelete(NULL);
         }
 
@@ -65,7 +76,12 @@ int main() {
     printf("Ultrasonic task created\n");
     xTaskCreate(sensor_task, "SensorTask", 2048, NULL, 4, NULL);
 
-    //xTaskCreate(, "", 2048, NULL, 2, NULL);
+    xTaskCreate(line_following_task, "lineFollowingTask", 2048, NULL, 3, &lineFollinwgTaskHandle);
+    //suspend the line following task
+    vTaskSuspend(lineFollinwgTaskHandle);
+    xTaskCreate(barcode_task, "BarcodeTask", 2048, NULL, 4, &barcodeTaskHandle);
+    //suspend the barcode task
+    vTaskSuspend(barcodeTaskHandle);
 
     // Start the FreeRTOS scheduler
     vTaskStartScheduler();

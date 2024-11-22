@@ -9,7 +9,6 @@
 #define ECHO_PIN 1
 
 // Define constants
-#define DISTANCE_THRESHOLD 20.0
 #define OBSTACLE_REMOVAL_THRESHOLD 5
 
 
