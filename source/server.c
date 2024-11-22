@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #include "pico/cyw43_arch.h"
+#include "motor.h"
 #include "pico/stdlib.h"
 
 #include "lwip/ip4_addr.h"
@@ -68,7 +69,24 @@ static void udp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, cons
                    packet.direction, packet.speed);
             last_packet = packet;
         }
+        Direction dir;
+        if (strcmp(packet.direction, "Forward") == 0) {
+            dir = DIRECTION_FORWARD;
+        } else if (strcmp(packet.direction, "Backward") == 0) {
+            dir = DIRECTION_BACKWARD;
+        } else if (strcmp(packet.direction, "Left") == 0) {
+            dir = DIRECTION_LEFT;
+        } else if (strcmp(packet.direction, "Right") == 0) {
+            dir = DIRECTION_RIGHT;
+        }else if (strcmp(packet.direction, "Neutral") == 0) {
+            dir = DIRECTION_NEUTRAL;
+        }
+         else {
+            printf("Unknown direction: %s\n", packet.direction);
+            dir = DIRECTION_NEUTRAL; // Default direction
+        }
 
+        move_robot(dir, (uint8_t)packet.speed);
         // Move any remaining data to the start of the buffer
         buffer_len -= sizeof(DataPacket);
         memmove(buffer, buffer + sizeof(DataPacket), buffer_len);
@@ -88,43 +106,58 @@ void print_ip_address() {
 }
 
 void wifi_task(__unused void *params) {
+    printf("Initializing Wi-Fi...\n");
+
+    // Initialize Wi-Fi after scheduler has started
     if (cyw43_arch_init()) {
-        printf("failed to initialise\n");
-        return;
+        printf("Failed to initialize Wi-Fi\n");
+        vTaskDelete(NULL); // Terminate this task
     }
+    printf("Wi-Fi initialized\n");
+
+    // Set Wi-Fi credentials
+    const char *ssid = "ash (2)";
+    const char *password = "stick123";
+
+    // Connect to Wi-Fi
     cyw43_arch_enable_sta_mode();
     printf("Connecting to Wi-Fi...\n");
-    if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 30000)) {
-        
-        printf("failed to connect.\n");
-        exit(1);
-    } else {
-        printf("Connected to wifi.\n");
-        print_ip_address();
-    }
 
+    if (cyw43_arch_wifi_connect_timeout_ms(ssid, password, CYW43_AUTH_WPA2_AES_PSK, 10000)) {
+        printf("Failed to connect to Wi-Fi\n");
+        cyw43_arch_deinit();
+        vTaskDelete(NULL); // Terminate this task
+    }
+    printf("Wi-Fi connected\n");
+    
+    // Initialize UDP server
     udp_server_pcb = udp_new();
     if (!udp_server_pcb) {
-        printf("Server: Error creating PCB.\n");
-        return;
+        printf("Failed to create UDP PCB\n");
+        // Handle error
     }
-
-    ip_addr_t ipaddr;
-    IP4_ADDR(&ipaddr, 0, 0, 0, 0);
-
-    err_t err = udp_bind(udp_server_pcb, &ipaddr, UDP_PORT);
-    if (err != ERR_OK) {
-        printf("Server: Error binding PCB.\n");
-        return;
+    
+    if (udp_bind(udp_server_pcb, IP_ADDR_ANY, UDP_PORT) != ERR_OK) {
+        printf("Failed to bind UDP server to port %d\n", UDP_PORT);
+        // Handle error
     }
-
+    
     udp_recv(udp_server_pcb, udp_server_recv, NULL);
-    printf("Server: Listening on port %d\n", UDP_PORT);
 
-    while (true) {
-        vTaskDelay(100);
+    // Print IP address
+    const struct netif *netif = netif_list;
+    if (netif_is_up(netif)) {
+        printf("IP Address: %s\n", ip4addr_ntoa(netif_ip4_addr(netif)));
+    } else {
+        printf("No IP address assigned yet.\n");
     }
 
-    cyw43_arch_deinit();
-}
+    // Keep the task alive
+    while (true) {
+        vTaskDelay(pdMS_TO_TICKS(500));
+    }
 
+    // Cleanup (if ever reached)
+    cyw43_arch_deinit();
+    vTaskDelete(NULL);
+}

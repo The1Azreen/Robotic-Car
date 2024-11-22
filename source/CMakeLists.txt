@@ -17,6 +17,12 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR} 
 )
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    CYW43_LWIP=1
+    PICO_CYW43_ARCH_THREADSAFE_BACKGROUND=1
+)
+
+
 # Add required libraries
 target_link_libraries(${PROJECT_NAME} 
     pico_stdlib 

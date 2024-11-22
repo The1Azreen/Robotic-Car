@@ -61,10 +61,10 @@ void right_motor(bool forward, uint16_t speed) {
 void move_robot(Direction direction, uint8_t speed_level) {
     // Ensure speed level is within valid range
     if (speed_level < 1) speed_level = 1;
-    if (speed_level > 5) speed_level = 5;
+    if (speed_level > 4) speed_level = 4;
 
     // Map speed level to PWM value
-    uint16_t speed = MINIMUM_SPEED + ((MAX_SPEED - MINIMUM_SPEED) / 4) * (speed_level - 1);
+    uint16_t speed = MINIMUM_SPEED + ((MAX_SPEED - MINIMUM_SPEED) / 3) * (speed_level - 1);
     
     // Ensure speed adheres to the minimum threshold
     if (speed < MINIMUM_SPEED) {
@@ -85,15 +85,19 @@ void move_robot(Direction direction, uint8_t speed_level) {
             break;
         case DIRECTION_LEFT:
             // For left turn, reduce speed of left motor
-            left_motor(true, speed / 2);
+            left_motor(true, speed / 4);
             right_motor(true, speed);
             printf("Turning LEFT - Speed Level: %d, PWM Speeds: L=%d, R=%d\n", speed_level, speed / 2, speed);
             break;
         case DIRECTION_RIGHT:
             // For right turn, reduce speed of right motor
             left_motor(true, speed);
-            right_motor(true, speed / 2);
+            right_motor(true, speed / 4);
             printf("Turning RIGHT - Speed Level: %d, PWM Speeds: L=%d, R=%d\n", speed_level, speed, speed / 2);
+            break;
+        case DIRECTION_NEUTRAL:
+            // For right turn, reduce speed of right motor
+            stop_motors();
             break;
         default:
             // Stop motors if invalid direction

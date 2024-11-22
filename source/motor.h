@@ -11,11 +11,12 @@ typedef enum {
     DIRECTION_FORWARD,
     DIRECTION_BACKWARD,
     DIRECTION_LEFT,
-    DIRECTION_RIGHT
+    DIRECTION_RIGHT,
+    DIRECTION_NEUTRAL
 } Direction;
 
 // Define the minimum and maximum speed PWM values
-#define MINIMUM_SPEED 120  // Adjust based on testing
+#define MINIMUM_SPEED 140  // Adjust based on testing
 #define MAX_SPEED 255
 
 // Function declarations
