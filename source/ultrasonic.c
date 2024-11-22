@@ -71,18 +71,15 @@ void ultrasonic_task(void *pvParameters) {
 
         // Calculate distance
         double distance = calculate_distance();
-        printf("Measured Distance: %.2f cm\n", distance);
-
         // Check if the obstacle is detected
         if (distance < DISTANCE_THRESHOLD) {
-            printf("Obstacle Detected\n");
             obstacle_flag = true;
         } else {
-            printf("Obstacle Removed\n");
             obstacle_flag = false;
         }
 
         // Delay before the next main scan
         vTaskDelay(pdMS_TO_TICKS(100));
+        printf("flag: %d\n", obstacle_flag);
     }
 }

@@ -36,6 +36,16 @@
 static char buffer[BUFFER_SIZE];
 static int buffer_len = 0;
 
+bool sensor_flag;
+
+void set_sensor_flag(bool flag) {
+    sensor_flag = flag;
+}
+
+bool get_sensor_flag() {
+    return sensor_flag;
+}
+
 #define TEST_TASK_PRIORITY (tskIDLE_PRIORITY + 1UL)
 
 static struct udp_pcb *udp_server_pcb;
@@ -62,23 +72,16 @@ static void udp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, cons
     while (buffer_len >= sizeof(DataPacket)) {
         DataPacket packet;
         memcpy(&packet, buffer, sizeof(DataPacket));
-
-        // Print or process the received DataPacket only if direction or speed has changed
-        if (strcmp(packet.direction, last_packet.direction) != 0 || packet.speed != last_packet.speed) {
-            printf("Server: Received DataPacket - Direction: %s, Speed: %d\n",
-                   packet.direction, packet.speed);
-            last_packet = packet;
-        }
         Direction dir;
-        if (strcmp(packet.direction, "Forward") == 0 && get_obstacle_flag() == false) {
+        if (strcmp(packet.direction, "Forward") == 0 && get_obstacle_flag() == false && get_sensor_flag() == 0) {
             dir = DIRECTION_FORWARD;
-        } else if (strcmp(packet.direction, "Backward") == 0 && get_obstacle_flag() == false) {
+        } else if (strcmp(packet.direction, "Backward") == 0 && get_obstacle_flag() == false && get_sensor_flag() == 0) {
             dir = DIRECTION_BACKWARD;
-        } else if (strcmp(packet.direction, "Left") == 0 && get_obstacle_flag() == false) {
+        } else if (strcmp(packet.direction, "Left") == 0 && get_obstacle_flag() == false && get_sensor_flag() == 0) {
             dir = DIRECTION_LEFT;
-        } else if (strcmp(packet.direction, "Right") == 0 && get_obstacle_flag() == false) {
+        } else if (strcmp(packet.direction, "Right") == 0 && get_obstacle_flag() == false && get_sensor_flag() == 0) {
             dir = DIRECTION_RIGHT;
-        }else if (strcmp(packet.direction, "Neutral") == 0 || get_obstacle_flag() == true) {
+        }else if (strcmp(packet.direction, "Neutral") == 0 || get_obstacle_flag() == true || get_sensor_flag() == 1) {
             dir = DIRECTION_NEUTRAL;
         }
          else {

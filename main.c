@@ -8,13 +8,37 @@
 #include "pico/cyw43_arch.h"
 #include "pico/stdlib.h"
 #include "server.h"
-#include "transition.h"
 
 // Declare task handles
 TaskHandle_t wifiTaskHandle = NULL;
 
 // Forward declaration of wifi_task
 void wifi_task(void *params);
+
+
+void sensor_task(void *pvParameters) {
+    bool sensor_activated = false;
+    printf("Starting sensor task\n");
+
+    vTaskDelay(pdMS_TO_TICKS(10000)); // Delay before starting
+
+    while (1) {
+        // Read IR sensor
+        bool sensor_value = gpio_get(SENSOR_PIN);
+        printf("Sensor value: %d\n", sensor_value);
+        
+        if (sensor_value == 0 && !sensor_activated) {
+            printf("IR sensor activated. Switching to line following mode & barcode reading.\n");
+            // Flag enable to disable wifi task
+            set_sensor_flag(true);
+            sensor_activated = true;
+        }
+
+        // Delay before next read
+        vTaskDelay(pdMS_TO_TICKS(100)); // Adjust as needed
+    }
+}
+
 
 int main() {
     stdio_init_all();
@@ -27,12 +51,14 @@ int main() {
     sleep_ms(2000);
 
     // Create Wi-Fi task with sufficient stack size
-    xTaskCreate(wifi_task, "WifiTask", 8192, NULL, 1, &wifiTaskHandle);
+    xTaskCreate(wifi_task, "WifiTask", 8192, NULL, 3, &wifiTaskHandle);
     printf("Wi-Fi task created\n");
 
-    xTaskCreate(ultrasonic_task, "UltrasonicTask", 4096, NULL, 3, NULL);
+    xTaskCreate(ultrasonic_task, "UltrasonicTask", 4096, NULL, 2, NULL);
     printf("Ultrasonic task created\n");
-    // xTaskCreate(sensor_task, "SensorTask", 2048, NULL, 1, NULL);
+    xTaskCreate(sensor_task, "SensorTask", 2048, NULL, 4, NULL);
+
+    //xTaskCreate(, "", 2048, NULL, 2, NULL);
 
     // Start the FreeRTOS scheduler
     vTaskStartScheduler();
