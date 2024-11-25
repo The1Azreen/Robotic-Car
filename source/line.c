@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include "encoder.h"
 #include "task_handles.h"
+#include "ultrasonic.h"
 
 #define MINIMUM_SPEED 100  // Adjust based on testing
 
@@ -121,5 +122,12 @@ void line_following_task(void *pvParameters) {
 
         // Delay to match control interval (e.g., 100ms)
         vTaskDelay(pdMS_TO_TICKS(0.5));
+        
+        if (get_obstacle_flag()) {
+            // Stop motors
+            stop_motors();
+            // Delay before the next main scan
+            vTaskDelay(pdMS_TO_TICKS(100));
+        }
     }
 }

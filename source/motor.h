@@ -16,7 +16,7 @@ typedef enum {
 } Direction;
 
 // Define the minimum and maximum speed PWM values
-#define MINIMUM_SPEED 140  // Adjust based on testing
+#define MINIMUM_SPEED 100  // Adjust based on testing
 #define MAX_SPEED 255
 
 // Function declarations

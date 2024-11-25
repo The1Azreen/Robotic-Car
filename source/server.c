@@ -109,15 +109,7 @@ void print_ip_address() {
 }
 
 void wifi_task(__unused void *params) {
-    printf("Initializing Wi-Fi...\n");
-
-    // Initialize Wi-Fi after scheduler has started
-    if (cyw43_arch_init()) {
-        printf("Failed to initialize Wi-Fi\n");
-        vTaskDelete(NULL); // Terminate this task
-    }
-    printf("Wi-Fi initialized\n");
-
+    
     // Set Wi-Fi credentials
     const char *ssid = "ash (2)";
     const char *password = "stick123";

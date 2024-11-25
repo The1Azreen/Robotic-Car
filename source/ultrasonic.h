@@ -21,5 +21,7 @@ void emergency_brake();
 void ultrasonic_task(void *pvParameters);
 bool get_obstacle_flag();
 void set_obstacle_flag(bool flag);
+void set_distance_threshold(double threshold);
+double get_distance_threshold();
 
 #endif // ULTRASONIC_H

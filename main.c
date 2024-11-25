@@ -10,6 +10,8 @@
 #include "server.h"
 #include "barcode.h"
 #include "line.h"
+#include "ultrasonic.h"
+#include "hardware/watchdog.h"
 
 
 // Declare task handles
@@ -29,7 +31,6 @@ void sensor_task(void *pvParameters) {
         // Read IR sensor
         bool sensor_value = gpio_get(SENSOR_PIN);
         set_sensor_flag(true);
-        set_threshold_distance(50.0);
         printf("Sensor value: %d\n", sensor_value);
         //print sensor flag
         printf("Sensor flag: %d\n", get_sensor_flag());
@@ -37,6 +38,7 @@ void sensor_task(void *pvParameters) {
         printf("Obstacle flag: %d\n", get_obstacle_flag());
         
         if (sensor_value == 1 && !sensor_activated) {
+            set_distance_threshold(50.0);
             printf("IR sensor activated. Switching to line following mode & barcode reading.\n");
             // Flag enable to disable wifi task
             printf("Priority of wifi task: %d\n", uxTaskPriorityGet(wifiTaskHandle));
@@ -57,22 +59,43 @@ void sensor_task(void *pvParameters) {
     }
 }
 
+void watchdog_task(void *pvParameters) {
+    while (1) {
+        // Feed the watchdog
+        watchdog_update();
+
+        // Delay for a period less than the watchdog timeout
+        vTaskDelay(pdMS_TO_TICKS(200)); // 200 ms delay
+    }
+}
+
+
 
 int main() {
     stdio_init_all();
-    sleep_ms(4000);
-
     // Initialize hardware
     initialize_hardware();
     motor_init();
-    
-    sleep_ms(2000);
+    printf("Initializing Wi-Fi...\n");
 
+    // Initialize Wi-Fi after scheduler has started
+    if (cyw43_arch_init()) {
+        printf("Failed to initialize Wi-Fi\n");
+        vTaskDelete(NULL); // Terminate this task
+    }
+    printf("Wi-Fi initialized\n");
+
+
+    watchdog_enable(500, false);
+    // watch dog enable
+    printf("Watchdog enabled\n");
+    xTaskCreate(watchdog_task, "WatchdogTask", 256, NULL, 5, NULL);
+    
     // Create Wi-Fi task with sufficient stack size
     xTaskCreate(wifi_task, "WifiTask", 8192, NULL, 3, &wifiTaskHandle);
     printf("Wi-Fi task created\n");
 
-    xTaskCreate(ultrasonic_task, "UltrasonicTask", 4096, NULL, 2, NULL);
+    xTaskCreate(ultrasonic_task, "UltrasonicTask", 4096, NULL, 3, NULL);
     printf("Ultrasonic task created\n");
     xTaskCreate(sensor_task, "SensorTask", 2048, NULL, 4, NULL);
 
