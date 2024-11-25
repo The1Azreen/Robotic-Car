@@ -25,7 +25,7 @@ void wifi_task(void *params);
 
 
 void sensor_task(void *pvParameters) {
-    bool sensor_fla = false;
+    bool sensor_flag = false;
     printf("Starting sensor task\n");
     while (1) {
         // Read IR sensor
@@ -40,13 +40,9 @@ void sensor_task(void *pvParameters) {
         if (sensor_value == 1 && !sensor_activated) {
             set_distance_threshold(50.0);
             printf("IR sensor activated. Switching to line following mode & barcode reading.\n");
-            // Flag enable to disable wifi task
-            printf("Priority of wifi task: %d\n", uxTaskPriorityGet(wifiTaskHandle));
-            vTaskPrioritySet(wifiTaskHandle, 0);
             set_sensor_flag(false);
             sensor_activated = true;
             // print priority of wifi task
-            printf("Priority of wifi task: %d\n", uxTaskPriorityGet(wifiTaskHandle));
             //resume the line following task
             vTaskResume(lineFollinwgTaskHandle);
             //resume the barcode task
