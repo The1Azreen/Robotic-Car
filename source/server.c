@@ -38,6 +38,10 @@ static int buffer_len = 0;
 
 bool sensor_flag;
 
+// Declare global variables to store the client's address and port
+static ip_addr_t client_addr;
+static uint16_t client_port;
+
 void set_sensor_flag(bool flag) {
     sensor_flag = flag;
 }
@@ -51,6 +55,40 @@ bool get_sensor_flag() {
 static struct udp_pcb *udp_server_pcb;
 
 static DataPacket last_packet = { .direction = "", .speed = -1 };
+
+void set_client_address(const char *ip_str, uint16_t port) {
+    if (!ip4addr_aton(ip_str, &client_addr)) {
+        printf("Invalid IP address format: %s\n", ip_str);
+    } else {
+        client_port = port;
+        printf("Client address set to %s:%d\n", ip_str, port);
+    }
+}
+
+void send_message_to_client(const char *message) {
+    if (udp_server_pcb == NULL) {
+        printf("UDP PCB is not initialized.\n");
+        return;
+    }
+
+    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, strlen(message), PBUF_RAM);
+    if (!p) {
+        printf("Failed to allocate pbuf.\n");
+        return;
+    }
+
+    memcpy(p->payload, message, strlen(message));
+
+    err_t err = udp_sendto(udp_server_pcb, p, &client_addr, client_port);
+    if (err != ERR_OK) {
+        printf("Failed to send message to client: %d\n", err);
+    } else {
+        printf("Message sent to client: %s\n", message);
+    }
+
+    pbuf_free(p);
+}
+
 
 static void udp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port) {
     if (!p) {
@@ -88,13 +126,17 @@ static void udp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, cons
             printf("Unknown direction: %s\n", packet.direction);
             dir = DIRECTION_NEUTRAL; // Default direction
         }
-
         move_robot(dir, (uint8_t)packet.speed);
+        // After processing the packet, send a message to the printer Pico W
+        char message[128];
+        snprintf(message, sizeof(message), "Processed direction: %s, speed: %d", packet.direction, packet.speed);
+        send_message_to_client(message);
+
         // Move any remaining data to the start of the buffer
         buffer_len -= sizeof(DataPacket);
         memmove(buffer, buffer + sizeof(DataPacket), buffer_len);
+        
     }
-
     pbuf_free(p);
 }
 
@@ -125,17 +167,20 @@ void wifi_task(__unused void *params) {
     }
     printf("Wi-Fi connected\n");
     
-    // Initialize UDP server
-    udp_server_pcb = udp_new();
-    if (!udp_server_pcb) {
-        printf("Failed to create UDP PCB\n");
-        // Handle error
+    if (udp_server_pcb == NULL) {
+        udp_server_pcb = udp_new();
+        if (!udp_server_pcb) {
+            printf("Failed to create UDP PCB\n");
+            // Handle error
+        }
+
+        // Bind to any address and port (or a specific port if needed)
+        if (udp_bind(udp_server_pcb, IP_ADDR_ANY, UDP_PORT) != ERR_OK) {
+            printf("Failed to bind UDP PCB\n");
+            // Handle error
+        }
     }
-    
-    if (udp_bind(udp_server_pcb, IP_ADDR_ANY, UDP_PORT) != ERR_OK) {
-        printf("Failed to bind UDP server to port %d\n", UDP_PORT);
-        // Handle error
-    }
+
     
     udp_recv(udp_server_pcb, udp_server_recv, NULL);
 
@@ -146,6 +191,15 @@ void wifi_task(__unused void *params) {
     } else {
         printf("No IP address assigned yet.\n");
     }
+
+    // Set the printer Pico W's IP and port
+    if (!ip4addr_aton("172.20.10.5", &client_addr)) { // Replace with your printer Pico W's IP
+        printf("Invalid printer Pico W IP address.\n");
+    } else {
+        client_port = 4243; // Port the printer Pico W is listening on
+        printf("Printer Pico W address set to %s:%d\n", ipaddr_ntoa(&client_addr), client_port);
+    }
+
 
     // Keep the task alive
     while (true) {

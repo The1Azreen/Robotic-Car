@@ -66,7 +66,6 @@ void watchdog_task(void *pvParameters) {
 }
 
 
-
 int main() {
     stdio_init_all();
     // Initialize hardware
@@ -80,7 +79,11 @@ int main() {
         vTaskDelete(NULL); // Terminate this task
     }
     printf("Wi-Fi initialized\n");
-
+    
+    // In your main function or initialization code
+    set_client_address("192.168.1.100", 4242);
+    // print client address
+    printf("Client address: %s\n", ip4addr_ntoa(&client_addr));
 
     watchdog_enable(500, false);
     // watch dog enable

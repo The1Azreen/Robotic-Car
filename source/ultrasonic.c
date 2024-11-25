@@ -88,8 +88,18 @@ void ultrasonic_task(void *pvParameters) {
             obstacle_flag = false;
         }
         printf("Distance: %.2f cm\n", distance);
+        char message[50];
+        sprintf(message, "ultrasonic distance : %.2f", distance);
+        send_message_to_client(message);
+        
         // Delay before the next main scan
         vTaskDelay(pdMS_TO_TICKS(100));
         printf("obstacle flag: %d\n", obstacle_flag);
+
+        // create message template to send to client whether obstacle flag = 1 or 0 1 being e-brake!
+        if (obstacle_flag){
+            sprintf(message, "ultrasonic ebrake status: %s", obstacle_flag ? "true" : "false");
+            send_message_to_client(message);
+        }
     }
 }

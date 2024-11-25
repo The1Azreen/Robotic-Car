@@ -3,6 +3,7 @@
 #include "pico/stdlib.h"
 #include "pins.h"
 #include "barcode.h"
+#include "server.h"
 
 // Forward-reading Code39 character mapping dictionary
 const Code39Mapping CODE39_DICT[] = {
@@ -107,6 +108,7 @@ void add_to_message(char decoded_char)
             decoded_message[message_length++] = decoded_char;
             decoded_message[message_length] = '\0'; // Null terminate
             printf("Current decoded message: %s\n", decoded_message);
+
         }
     }
     else
@@ -155,6 +157,10 @@ void process_bars(BarInfo *bars, int character_count)
         char decoded_char = decode_pattern(pattern);
         printf("Decoded character: %c\n", decoded_char);
         add_to_message(decoded_char);
+
+        char message[50];
+        sprintf(message, "decoded message : %c", decoded_message);
+        send_message_to_client(message);
     }
     else
     {
