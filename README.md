@@ -51,7 +51,36 @@ In this section, we will go over the modular design of the car. Our project comp
 
 
 ### Project Structure
+```
 
+docs/ (documentation images)
+
+source/encoder.c (driver code for wheel encoders)
+
+source/line.c
+
+source/barcode.c
+
+source/magnetometer
+
+source/main/ (main program code)
+
+source/motor/ 
+
+source/pins
+
+source/ultrasonic
+
+source/
+
+README.md (this file)
+
+Build files:
+CMakeLists.txt
+FreeRTOS_Kernel_import.cmake
+pico_extras_import_optional.cmake
+pico_sdk_import.cmake
+```
 
 ### Getting Started
 
