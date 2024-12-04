@@ -25,6 +25,9 @@ In this section, we will go over the modular design of the car. Our project comp
 - Encoder (for car movement)
 - Magnetometer (for car direction tracking)
 
+### Map Design
+
+
 ### Component List
 
 **Raspberry Pi**
