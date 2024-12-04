@@ -24,3 +24,34 @@ In this section, we will go over the modular design of the car. Our project comp
 - IRLine (for barcode decoding and line following)
 - Encoder (for car movement)
 - Magnetometer (for car direction tracking)
+
+### Component List
+
+**Raspberry Pi**
+- 1 x [Raspberry Pi Pico W](https://www.raspberrypi.com/products/raspberry-pi-pico/)
+
+**Sensors**
+- 1 x [Ultrasonic Sensor: HCR04](https://components101.com/sensors/ultrasonic-sensor-working-pinout-datasheet)
+- 3 x [IR Sensor](https://sg.cytron.io/p-ir-line-tracking-module)
+- 2 x [Wheel Encoder](https://hobbycomponents.com/sensors/1147-compact-ir-infrared-rotary-speed-sensing-module)
+- 2 x [Motor Controller: L298N](https://components101.com/modules/l293n-motor-driver-module)
+- 2 x Motor
+- 1 x [Magnetometer: GY-511](https://quartzcomponents.com/products/gy-511-lsm303dlhc-3-axis-e-compass-sensor)
+
+**Hardware**
+- 2 x Car Wheels
+- 1 x Car Chassis
+- 1 x Wire Splitter
+- 1 x Powerbank
+- Mounting Plates
+- Nuts and Bolts
+- Jumper Cables (M-M, F-F, M-F)
+
+
+### Project Structure
+
+
+### Getting Started
+
+
+
