@@ -17,12 +17,11 @@ Our project centers on developing an autonomous two-wheeled robot car powered by
 ---
 In this section, we will go over the modular design of the car. Our project comprises of 8 components, each catered for a particular sensor/aspect of the car:
 - Main (program entrypoint for car to start executions)
-- Navigation and Mapping
-- Wifi
-- Motor
+- Wifi (send and receive data)
+- Motor (moves the car)
 - Ultrasonic (for obstacle detection)
 - IRLine (for barcode decoding and line following)
-- Encoder (for car movement)
+- Encoder (pid controller)
 - Magnetometer (for car direction tracking)
 
 ### Map Design
