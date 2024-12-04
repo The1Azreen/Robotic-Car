@@ -44,7 +44,7 @@ In this section, we will go over the modular design of the car. Our project comp
 - 2 x Car Wheels
 - 1 x Car Chassis
 - 1 x Wire Splitter
-- 1 x Powerbank
+- 1 x Powerbank (Alternatively you can use AA batteries with a battery holder so long the pico is powered via USB)
 - Mounting Plates
 - Nuts and Bolts
 - Jumper Cables (M-M, F-F, M-F)
