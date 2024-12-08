@@ -1,12 +1,12 @@
 # INF2004-Project-P3G
 **Robotic Car Project - Team P3G**
 
-### Members (Adduing the name later)
+### Members
 **Team Members** <br>
 Shao <br>
-Seb <br>
-Aloy <br>
-Ash <br>
+Sebastian <br>
+Aloysius <br>
+Ashsyahid <br>
 Azreen <be>
 
 ### Project Description
