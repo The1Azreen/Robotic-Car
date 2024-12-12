@@ -26,6 +26,7 @@ In this section, we will go over the modular design of the car. Our project comp
 
 ### Map Design
 
+<img src="docs/Sample_Map.jpeg">
 
 ### Component List
 
