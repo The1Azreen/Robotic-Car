@@ -52,27 +52,24 @@ In this section, we will go over the modular design of the car. Our project comp
 
 
 ### Project Structure
+
 ```
-
-docs/ (documentation images)
-
-source/encoder.c (driver code for wheel encoders)
-
-source/line.c
+docs/ 
 
 source/barcode.c
-
-source/magnetometer
-
-source/main/ (main program code)
-
-source/motor/ 
-
-source/pins
-
-source/ultrasonic
-
-source/
+source/barcode.h
+source/encoder.c
+source/encoder.h
+source/hardware_init.c
+source/hardware_init.h
+source/line.c
+source/line.h
+source/motor.c
+source/motor.h
+source/pins.h
+source/task_handles.h
+source/ultrasonic.c
+source/ultrasonic.h
 
 README.md (this file)
 
